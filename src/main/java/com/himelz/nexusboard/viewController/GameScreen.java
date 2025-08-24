@@ -380,8 +380,10 @@ public class GameScreen implements Initializable {
         if (piece == null) return;
         
         try {
-            var possibleMoves = gameState.getLegalMovesForPiece(piece);
-            for (var move : possibleMoves) {
+            // Get legal moves from GameState (this ensures they are properly validated)
+            var legalMoves = gameState.getLegalMovesForPiece(piece);
+            
+            for (var move : legalMoves) {
                 if (move.getFrom().equals(position)) {
                     Position to = move.getTo();
                     StackPane targetSquare = getSquareAt(to.getRow(), to.getCol());
@@ -392,6 +394,7 @@ public class GameScreen implements Initializable {
             }
         } catch (Exception e) {
             System.err.println("Error highlighting moves: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
@@ -439,6 +442,8 @@ public class GameScreen implements Initializable {
         
         clearSelection();
     }
+    
+
     
     /**
      * Handle successful move

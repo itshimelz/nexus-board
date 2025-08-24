@@ -51,13 +51,18 @@ public class GameState {
     }
 
 
-     //Attempt to make a move. Returns true if successful, false if invalid.
-
+    /**
+     * Attempt to make a move. Returns true if successful, false if invalid.
+     */
     public boolean makeMove(Position from, Position to) {
         ChessPiece piece = board.getPiece(from);
 
         // Basic validation
-        if (piece == null || piece.getColor() != currentPlayer) {
+        if (piece == null) {
+            return false;
+        }
+        
+        if (piece.getColor() != currentPlayer) {
             return false;
         }
 
@@ -66,19 +71,20 @@ public class GameState {
         if (move == null) {
             return false;
         }
-
+        
         // Execute the move
         executeMove(move);
 
         // Update game state
         updateGameState();
-
+        
         return true;
     }
 
 
-    //Find a valid move that matches the from/to positions
-
+    /**
+     * Find a valid move that matches the from/to positions
+     */
     private Move findValidMove(Position from, Position to, ChessPiece piece) {
         List<Move> possibleMoves = getLegalMovesForPiece(piece);
 
@@ -232,16 +238,24 @@ public class GameState {
      * Simulate a move on a board copy without changing game state
      */
     private void simulateMove(Move move, Board simulationBoard) {
+        // Get the piece from the simulation board (not the original piece!)
+        ChessPiece movingPiece = simulationBoard.getPiece(move.getFrom());
+        
+        if (movingPiece == null) {
+            System.err.println("ERROR: No piece found at " + move.getFrom() + " during simulation");
+            return;
+        }
+        
         switch (move.getMoveType()) {
             case CASTLE_KINGSIDE:
             case CASTLE_QUEENSIDE:
                 // For castling simulation, just move the king
                 simulationBoard.removePiece(move.getFrom());
-                simulationBoard.setPiece(move.getTo(), move.getMovingPiece());
+                simulationBoard.setPiece(move.getTo(), movingPiece);
                 break;
             default:
                 simulationBoard.removePiece(move.getFrom());
-                simulationBoard.setPiece(move.getTo(), move.getMovingPiece());
+                simulationBoard.setPiece(move.getTo(), movingPiece);
                 break;
         }
     }
