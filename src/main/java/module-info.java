@@ -13,9 +13,8 @@ module com.himelz.nexusboard {
     exports com.himelz.nexusboard.model.pieces;
     
     // Export view packages
-    exports com.himelz.nexusboard.view;
-    exports com.himelz.nexusboard.viewmodel;
-    
+    exports com.himelz.nexusboard.viewController;
+
     // Export network package
     exports com.himelz.nexusboard.network;
     
@@ -24,6 +23,5 @@ module com.himelz.nexusboard {
     
     // Open packages to JavaFX for FXML injection
     opens com.himelz.nexusboard.app to javafx.fxml;
-    opens com.himelz.nexusboard.view to javafx.fxml;
-    opens com.himelz.nexusboard.viewmodel to javafx.fxml;
+    opens com.himelz.nexusboard.viewController to javafx.fxml;
 }

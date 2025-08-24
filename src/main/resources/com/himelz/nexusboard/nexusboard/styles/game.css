@@ -1,0 +1,291 @@
+/* Nexus Board Game Screen Styles */
+
+.root {
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+/* Game Panels */
+.game-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+    -fx-padding: 20;
+}
+
+/* Player Sections */
+.player-section-black {
+    -fx-background-color: #2c3e50;
+    -fx-background-radius: 8;
+    -fx-padding: 15;
+}
+
+.player-section-white {
+    -fx-background-color: #ecf0f1;
+    -fx-background-radius: 8;
+    -fx-padding: 15;
+}
+
+/* Board Components */
+.board-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.board-container {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 3);
+    -fx-padding: 20;
+}
+
+.chess-board {
+    -fx-border-color: #8B4513;
+    -fx-border-width: 3px;
+    -fx-border-radius: 5px;
+}
+
+/* Chess Square Styles */
+.light-square {
+    -fx-background-color: #eeeed2;
+}
+
+.dark-square {
+    -fx-background-color: #769656;
+}
+
+.selected-square {
+    -fx-background-color: #FFD700;
+    -fx-border-color: #FFA500;
+    -fx-border-width: 3px;
+}
+
+.highlighted-square {
+    -fx-background-color: #90EE90;
+    -fx-border-color: #32CD32;
+    -fx-border-width: 2px;
+}
+
+.last-move-square {
+    -fx-background-color: #FFEB3B;
+    -fx-border-color: #FBC02D;
+    -fx-border-width: 2px;
+}
+
+/* Chess Pieces */
+.chess-piece {
+    -fx-font-size: 42px;
+    -fx-cursor: hand;
+}
+
+.chess-piece-image {
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 3, 0, 1, 1);
+}
+
+.chess-piece-image:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0, 2, 2);
+}
+
+.white-piece {
+    -fx-text-fill: #FFFFFF;
+    -fx-stroke: #000000;
+    -fx-stroke-width: 1px;
+}
+
+.black-piece {
+    -fx-text-fill: #000000;
+    -fx-stroke: #FFFFFF;
+    -fx-stroke-width: 0.5px;
+}
+
+.piece-shadow {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 3, 0, 1, 1);
+}
+
+/* Coordinate Labels */
+.coordinate-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Text Styles */
+.section-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #2c3e50;
+}
+
+.status-text {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #27ae60;
+}
+
+.info-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+}
+
+/* Status Section */
+.status-section {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 8;
+    -fx-padding: 15;
+}
+
+/* Control Buttons */
+.control-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
+    -fx-pref-width: 200;
+}
+
+.control-button:hover {
+    -fx-background-color: #5dade2;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.control-button:pressed {
+    -fx-background-color: #2980b9;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+.control-button-danger {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
+    -fx-pref-width: 200;
+}
+
+.control-button-danger:hover {
+    -fx-background-color: #ec7063;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+/* Move History */
+.move-history {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.move-history .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2c3e50;
+    -fx-font-family: "Consolas", "Monaco", monospace;
+    -fx-font-size: 12px;
+    -fx-padding: 5 10;
+}
+
+.move-history .list-cell:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.move-history .list-cell:hover {
+    -fx-background-color: #ecf0f1;
+}
+
+/* Status Bar */
+.status-bar {
+    -fx-background-color: #34495e;
+    -fx-padding: 12 20;
+}
+
+.status-bar .label {
+    -fx-text-fill: #ecf0f1;
+    -fx-font-size: 12px;
+}
+
+/* Menu Bar Styling */
+.menu-bar {
+    -fx-background-color: #2c3e50;
+}
+
+.menu-bar .label {
+    -fx-text-fill: white;
+}
+
+.menu-bar .menu-button:hover,
+.menu-bar .menu-button:focused {
+    -fx-background-color: #34495e;
+}
+
+/* Captured Pieces */
+.captured-piece {
+    -fx-font-size: 20px;
+    -fx-text-fill: #7f8c8d;
+    -fx-padding: 2;
+    -fx-cursor: hand;
+}
+
+.captured-piece:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* Animations */
+.chess-square {
+    -fx-transition: all 0.2s ease;
+}
+
+.button {
+    -fx-transition: all 0.15s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .game-panel {
+        -fx-min-width: 200px;
+    }
+    
+    .chess-piece {
+        -fx-font-size: 36px;
+    }
+    
+    .board-title {
+        -fx-font-size: 20px;
+    }
+}
+
+/* Focus Indicators */
+.button:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+}
+
+.list-view:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2px;
+}
+
+/* Accessibility */
+.high-contrast .light-square {
+    -fx-background-color: white;
+}
+
+.high-contrast .dark-square {
+    -fx-background-color: #333333;
+}
+
+.high-contrast .chess-piece {
+    -fx-font-weight: bold;
+}

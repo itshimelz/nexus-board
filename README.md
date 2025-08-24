@@ -36,25 +36,28 @@ src/
 └── main/
     ├── java/
     │    └── com.himelz.nexusboard/
-    │         ├── app/                   # Application entry point
+    │         ├── app/                   # Application entry point and core classes
     │         │    ├── ChessApplication.java
     │         │    └── module-info.java
     │         │
-    │         ├── model/                 # Game logic and state
-    │         │    ├── board/            # Board representation
+    │         ├── model/                 # Game logic and data models
+    │         │    ├── board/            # Board representation and logic
     │         │    ├── pieces/           # Chess piece implementations
     │         │    └── GameState.java    # Game state management
     │         │
-    │         ├── view/                  # JavaFX UI components
-    │         ├── viewmodel/             # ViewModel layer
-    │         ├── network/               # Multiplayer networking
-    │         └── utils/                 # Helper classes
+    │         ├── viewController/        # JavaFX controllers for UI
+    │         ├── viewmodel/             # ViewModel layer for MVVM
+    │         ├── network/               # Multiplayer networking components
+    │         └── utils/                 # Helper and utility classes
     │
     └── resources/                       # Static resources
          └── com.himelz.nexusboard/
-              ├── fxml/                  # FXML views
-              ├── css/                   # Stylesheets
-              └── images/                # Piece images
+              └── nexusboard/
+                   ├── screens/          # FXML view files
+                   │    ├── HomeScreen.fxml
+                   │    └── LandingScreen.fxml
+                   ├── css/              # Stylesheets
+                   └── images/           # Game assets and piece images
 ```
 
 ## Getting Started
@@ -67,7 +70,7 @@ src/
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/itshimelz/nexus-board.git
    cd Nexus-Board
    ```
 
