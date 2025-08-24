@@ -54,6 +54,9 @@ public class HomeScreen {
         // Add buttons to container
         buttonContainer.getChildren().addAll(newGameBtn, loadGameBtn, settingsBtn, exitBtn);
 
+        // Add components to main container
+        mainContainer.getChildren().addAll(titleLabel, buttonContainer);
+
         // Create scene
         scene = new Scene(mainContainer, 800, 600);
         scene.setFill(Color.TRANSPARENT);
