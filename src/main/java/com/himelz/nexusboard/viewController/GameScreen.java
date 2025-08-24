@@ -1,5 +1,8 @@
 package com.himelz.nexusboard.viewController;
 
+import com.himelz.nexusboard.model.GameState;
+import com.himelz.nexusboard.model.board.Position;
+import com.himelz.nexusboard.model.pieces.ChessPiece;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -63,24 +66,20 @@ public class GameScreen implements Initializable {
     // Chess piece images
     private Map<String, Image> pieceImages;
     
+    // Game State
+    private GameState gameState;
+    
+    // Move selection state
+    private Position selectedSquare;
+    private StackPane selectedSquarePane;
+    
     // Chess piece Unicode symbols (kept for fallback)
     private static final String[] WHITE_PIECES = {"♔", "♕", "♖", "♗", "♘", "♙"};
     private static final String[] BLACK_PIECES = {"♚", "♛", "♜", "♝", "♞", "♟"};
     
-    // Initial chess position with piece identifiers
-    private static final String[][] INITIAL_POSITION = {
-        {"br", "bn", "bb", "bq", "bk", "bb", "bn", "br"}, // Rank 8
-        {"bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"}, // Rank 7
-        {"", "", "", "", "", "", "", ""},              // Rank 6
-        {"", "", "", "", "", "", "", ""},              // Rank 5
-        {"", "", "", "", "", "", "", ""},              // Rank 4
-        {"", "", "", "", "", "", "", ""},              // Rank 3
-        {"wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"}, // Rank 2
-        {"wr", "wn", "wb", "wq", "wk", "wb", "wn", "wr"}  // Rank 1
-    };
-    
     public GameScreen(Stage stage) {
         this.primaryStage = stage;
+        this.gameState = new GameState(); // Initialize game with starting position
     }
     
     public void show() {
@@ -161,13 +160,13 @@ public class GameScreen implements Initializable {
     }
     
     /**
-     * Initialize the 8x8 chess board with pieces
+     * Initialize the 8x8 chess board with current game state
      */
     private void initializeChessBoard() {
         // Clear any existing content
         chessBoard.getChildren().clear();
         
-        // Create 8x8 grid of squares
+        // Create 8x8 grid of squares and populate with pieces from game state
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 StackPane square = createChessSquare(row, col);
@@ -177,7 +176,7 @@ public class GameScreen implements Initializable {
     }
     
     /**
-     * Create a chess square with appropriate styling and piece
+     * Create a chess square with appropriate styling and piece from game state
      */
     private StackPane createChessSquare(int row, int col) {
         StackPane square = new StackPane();
@@ -193,48 +192,16 @@ public class GameScreen implements Initializable {
             square.getStyleClass().add("dark-square");
         }
         
-        // Add chess piece if present in initial position
-        String pieceCode = INITIAL_POSITION[row][col];
-        if (!pieceCode.isEmpty()) {
-            if (pieceImages != null && pieceImages.containsKey(pieceCode)) {
-                // Use piece images
-                ImageView pieceImageView = new ImageView(pieceImages.get(pieceCode));
-                pieceImageView.setFitWidth(50);
-                pieceImageView.setFitHeight(50);
-                pieceImageView.setPreserveRatio(true);
-                pieceImageView.setSmooth(true);
-                pieceImageView.getStyleClass().add("chess-piece-image");
-                
-                // Add hover effect
-                pieceImageView.setOnMouseEntered(e -> {
-                    pieceImageView.setScaleX(1.1);
-                    pieceImageView.setScaleY(1.1);
-                });
-                
-                pieceImageView.setOnMouseExited(e -> {
-                    pieceImageView.setScaleX(1.0);
-                    pieceImageView.setScaleY(1.0);
-                });
-                
-                square.getChildren().add(pieceImageView);
-            } else {
-                // Fallback to Unicode symbols
-                String unicodePiece = getUnicodePiece(pieceCode);
-                Label pieceLabel = new Label(unicodePiece);
-                pieceLabel.getStyleClass().add("chess-piece");
-                
-                // Style white and black pieces differently
-                if (pieceCode.startsWith("w")) {
-                    pieceLabel.getStyleClass().addAll("white-piece", "piece-shadow");
-                } else {
-                    pieceLabel.getStyleClass().addAll("black-piece", "piece-shadow");
-                }
-                
-                square.getChildren().add(pieceLabel);
-            }
+        // Get piece from game state and add to square
+        Position position = new Position(row, col);
+        ChessPiece piece = gameState.getBoard().getPiece(position);
+        
+        if (piece != null) {
+            addPieceToSquare(square, piece);
         }
         
-        // Add hover effect and click handler (for future use)
+        // Add hover effect and click handler
+
         square.setOnMouseEntered(e -> {
             if (!square.getStyleClass().contains("selected-square")) {
                 square.getStyleClass().add("highlighted-square");
@@ -248,6 +215,70 @@ public class GameScreen implements Initializable {
         square.setOnMouseClicked(e -> handleSquareClick(row, col, square));
         
         return square;
+    }
+    
+    /**
+     * Add a chess piece to a square based on the piece object
+     */
+    private void addPieceToSquare(StackPane square, ChessPiece piece) {
+        String pieceCode = getPieceCode(piece);
+        
+        if (pieceImages != null && pieceImages.containsKey(pieceCode)) {
+            // Use piece images
+            ImageView pieceImageView = new ImageView(pieceImages.get(pieceCode));
+            pieceImageView.setFitWidth(50);
+            pieceImageView.setFitHeight(50);
+            pieceImageView.setPreserveRatio(true);
+            pieceImageView.setSmooth(true);
+            pieceImageView.getStyleClass().add("chess-piece-image");
+            
+            // Add hover effect
+            pieceImageView.setOnMouseEntered(e -> {
+                pieceImageView.setScaleX(1.1);
+                pieceImageView.setScaleY(1.1);
+            });
+            
+            pieceImageView.setOnMouseExited(e -> {
+                pieceImageView.setScaleX(1.0);
+                pieceImageView.setScaleY(1.0);
+            });
+            
+            square.getChildren().add(pieceImageView);
+        } else {
+            // Fallback to Unicode symbols
+            String unicodePiece = piece.getUnicodeSymbol();
+            Label pieceLabel = new Label(unicodePiece);
+            pieceLabel.getStyleClass().add("chess-piece");
+            
+            // Style white and black pieces differently
+            if (piece.getColor() == com.himelz.nexusboard.model.Color.WHITE) {
+                pieceLabel.getStyleClass().addAll("white-piece", "piece-shadow");
+            } else {
+                pieceLabel.getStyleClass().addAll("black-piece", "piece-shadow");
+            }
+            
+            square.getChildren().add(pieceLabel);
+        }
+    }
+    
+    /**
+     * Get piece code for image lookup based on piece type and color
+     */
+    private String getPieceCode(ChessPiece piece) {
+        String colorPrefix = (piece.getColor() == com.himelz.nexusboard.model.Color.WHITE) ? "w" : "b";
+        String pieceType;
+        
+        switch (piece.getClass().getSimpleName().toLowerCase()) {
+            case "king": pieceType = "k"; break;
+            case "queen": pieceType = "q"; break;
+            case "rook": pieceType = "r"; break;
+            case "bishop": pieceType = "b"; break;
+            case "knight": pieceType = "n"; break;
+            case "pawn": pieceType = "p"; break;
+            default: pieceType = "p"; break;
+        }
+        
+        return colorPrefix + pieceType;
     }
     
     /**
@@ -273,21 +304,249 @@ public class GameScreen implements Initializable {
 
     
     /**
-     * Handle chess square click (placeholder for future game logic)
+     * Handle chess square click - implements piece selection and move logic
      */
     private void handleSquareClick(int row, int col, StackPane square) {
-        // Remove previous selections
-        chessBoard.getChildren().forEach(node -> {
-            node.getStyleClass().remove("selected-square");
-        });
+        Position clickedPosition = new Position(row, col);
+        ChessPiece clickedPiece = gameState.getBoard().getPiece(clickedPosition);
         
-        // Highlight clicked square
+        if (selectedSquare == null) {
+            // No piece selected - try to select a piece
+            if (clickedPiece != null && clickedPiece.getColor() == gameState.getCurrentPlayer()) {
+                selectSquare(clickedPosition, square);
+                if (statusLabel != null) {
+                    char file = (char)('a' + col);
+                    int rank = 8 - row;
+                    statusLabel.setText("Selected: " + clickedPiece.getClass().getSimpleName() + " at " + file + rank);
+                }
+            } else {
+                if (statusLabel != null) {
+                    statusLabel.setText("Select a " + gameState.getCurrentPlayer().toString().toLowerCase() + " piece to move");
+                }
+            }
+        } else {
+            // Piece already selected
+            if (clickedPosition.equals(selectedSquare)) {
+                // Clicked same square - deselect
+                clearSelection();
+                if (statusLabel != null) statusLabel.setText("Selection cleared");
+            } else if (clickedPiece != null && clickedPiece.getColor() == gameState.getCurrentPlayer()) {
+                // Clicked another own piece - select it instead
+                clearSelection();
+                selectSquare(clickedPosition, square);
+                if (statusLabel != null) {
+                    char file = (char)('a' + col);
+                    int rank = 8 - row;
+                    statusLabel.setText("Selected: " + clickedPiece.getClass().getSimpleName() + " at " + file + rank);
+                }
+            } else {
+                // Try to make a move
+                attemptMove(selectedSquare, clickedPosition);
+            }
+        }
+    }
+    
+    /**
+     * Select a square and highlight it
+     */
+    private void selectSquare(Position position, StackPane square) {
+        selectedSquare = position;
+        selectedSquarePane = square;
         square.getStyleClass().add("selected-square");
         
-        // Update status (for demonstration)
-        char file = (char)('a' + col);
-        int rank = 8 - row;
-        statusLabel.setText("Selected: " + file + rank);
+        // Highlight possible moves
+        highlightPossibleMoves(position);
+    }
+    
+    /**
+     * Clear current selection and highlights
+     */
+    private void clearSelection() {
+        if (selectedSquarePane != null) {
+            selectedSquarePane.getStyleClass().remove("selected-square");
+        }
+        selectedSquare = null;
+        selectedSquarePane = null;
+        
+        // Clear all move highlights
+        clearMoveHighlights();
+    }
+    
+    /**
+     * Highlight possible moves for the selected piece
+     */
+    private void highlightPossibleMoves(Position position) {
+        ChessPiece piece = gameState.getBoard().getPiece(position);
+        if (piece == null) return;
+        
+        try {
+            var possibleMoves = gameState.getLegalMovesForPiece(piece);
+            for (var move : possibleMoves) {
+                if (move.getFrom().equals(position)) {
+                    Position to = move.getTo();
+                    StackPane targetSquare = getSquareAt(to.getRow(), to.getCol());
+                    if (targetSquare != null) {
+                        targetSquare.getStyleClass().add("possible-move");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error highlighting moves: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Clear all move highlights
+     */
+    private void clearMoveHighlights() {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                StackPane square = getSquareAt(row, col);
+                if (square != null) {
+                    square.getStyleClass().remove("possible-move");
+                }
+            }
+        }
+    }
+    
+    /**
+     * Get square at specific position
+     */
+    private StackPane getSquareAt(int row, int col) {
+        for (var node : chessBoard.getChildren()) {
+            if (GridPane.getRowIndex(node) != null && GridPane.getColumnIndex(node) != null) {
+                if (GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == col) {
+                    return (StackPane) node;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Attempt to make a move from selected square to target square
+     */
+    private void attemptMove(Position from, Position to) {
+        boolean moveSuccessful = gameState.makeMove(from, to);
+        
+        if (moveSuccessful) {
+            // Move was successful
+            handleSuccessfulMove(from, to);
+        } else {
+            // Invalid move
+            handleInvalidMove(from, to);
+        }
+        
+        clearSelection();
+    }
+    
+    /**
+     * Handle successful move
+     */
+    private void handleSuccessfulMove(Position from, Position to) {
+        // Refresh the board display
+        refreshBoard();
+        
+        // Add move to history
+        String moveNotation = createMoveNotation(from, to);
+        addMoveToHistory(moveNotation);
+        
+        // Update status
+        if (statusLabel != null) {
+            char fromFile = (char)('a' + from.getCol());
+            int fromRank = 8 - from.getRow();
+            char toFile = (char)('a' + to.getCol());
+            int toRank = 8 - to.getRow();
+            statusLabel.setText("Move: " + fromFile + fromRank + " to " + toFile + toRank);
+        }
+        
+        // Check for game end conditions
+        checkGameEndConditions();
+    }
+    
+    /**
+     * Handle invalid move
+     */
+    private void handleInvalidMove(Position from, Position to) {
+        if (statusLabel != null) {
+            char fromFile = (char)('a' + from.getCol());
+            int fromRank = 8 - from.getRow();
+            char toFile = (char)('a' + to.getCol());
+            int toRank = 8 - to.getRow();
+            statusLabel.setText("Invalid move from " + fromFile + fromRank + " to " + toFile + toRank);
+        }
+    }
+    
+    /**
+     * Create move notation for display
+     */
+    private String createMoveNotation(Position from, Position to) {
+        int moveNumber = gameState.getMoveHistory().size();
+        boolean isWhiteMove = (moveNumber % 2) == 0;
+        
+        char fromFile = (char)('a' + from.getCol());
+        int fromRank = 8 - from.getRow();
+        char toFile = (char)('a' + to.getCol());
+        int toRank = 8 - to.getRow();
+        
+        String move = fromFile + Integer.toString(fromRank) + "-" + toFile + Integer.toString(toRank);
+        
+        if (isWhiteMove) {
+            return (moveNumber/2 + 1) + ". " + move;
+        } else {
+            return move;
+        }
+    }
+    
+    /**
+     * Check for game end conditions and update UI accordingly
+     */
+    private void checkGameEndConditions() {
+        var gameStatus = gameState.getGameStatus();
+        
+        switch (gameStatus) {
+            case CHECKMATE:
+                var winner = gameState.getCurrentPlayer().opposite(); // Winner is opposite of current player
+                if (statusLabel != null) statusLabel.setText("Checkmate! " + winner + " wins!");
+                if (gameStatusLabel != null) gameStatusLabel.setText("Game Over - " + winner + " wins");
+                disableGameControls();
+                break;
+            case STALEMATE:
+                if (statusLabel != null) statusLabel.setText("Stalemate! Game is a draw.");
+                if (gameStatusLabel != null) gameStatusLabel.setText("Game Over - Stalemate");
+                disableGameControls();
+                break;
+            case CHECK:
+                if (statusLabel != null) statusLabel.setText(gameState.getCurrentPlayer() + " is in check!");
+                break;
+            case DRAW:
+                if (statusLabel != null) statusLabel.setText("Game is a draw.");
+                if (gameStatusLabel != null) gameStatusLabel.setText("Game Over - Draw");
+                disableGameControls();
+                break;
+            default:
+                // Game continues - update status
+                updateGameStatusDisplay();
+                break;
+        }
+    }
+    
+    /**
+     * Disable game controls when game is over
+     */
+    private void disableGameControls() {
+        if (undoButton != null) undoButton.setDisable(true);
+        if (resignButton != null) resignButton.setDisable(true);
+        if (drawButton != null) drawButton.setDisable(true);
+    }
+    
+    /**
+     * Enable game controls for active game
+     */
+    private void enableGameControls() {
+        if (undoButton != null) undoButton.setDisable(false);
+        if (resignButton != null) resignButton.setDisable(false);
+        if (drawButton != null) drawButton.setDisable(false);
     }
     
     /**
@@ -309,57 +568,53 @@ public class GameScreen implements Initializable {
      * Set up initial game state display
      */
     private void setupInitialGameState() {
-        // Player names
-        blackPlayerName.setText("Black Player");
-        whitePlayerName.setText("You");
+        // Set up player information based on game state
+        if (blackPlayerName != null) blackPlayerName.setText("Black Player");
+        if (whitePlayerName != null) whitePlayerName.setText("White Player");
         
-        // Timers
-        blackTimer.setText("⏱ 15:00");
-        whiteTimer.setText("⏱ 15:00");
+        if (blackTimer != null) blackTimer.setText("⏱ 15:00");
+        if (whiteTimer != null) whiteTimer.setText("⏱ 15:00");
         
-        // Player status
-        blackStatus.setText("Waiting...");
-        whiteStatus.setText("Your turn");
+        // Set initial status based on game state
+        updateGameStatusDisplay();
         
-        // Game status
-        gameStatusLabel.setText("White to move");
-        turnLabel.setText("Move: 1");
-        gameModeLabel.setText("Mode: Single Player");
+        if (statusLabel != null) statusLabel.setText("Game started - White to move");
+        if (connectionStatus != null) connectionStatus.setText("🟢 Local Game");
         
-        // Analysis (placeholder)
-        evaluationLabel.setText("Evaluation: +0.0");
-        bestMoveLabel.setText("Best: e4");
-        
-        // Status bar
-        statusLabel.setText("Game started - White to move");
-        connectionStatus.setText("🟢 Local Game");
-        
-        // Setup captured pieces display with sample pieces
-        setupCapturedPiecesDisplay();
+        // Clear captured pieces displays (will be populated as game progresses)
+        if (capturedWhitePieces != null) capturedWhitePieces.getChildren().clear();
+        if (capturedBlackPieces != null) capturedBlackPieces.getChildren().clear();
     }
     
     /**
-     * Setup captured pieces display with sample captured pieces
+     * Update game status display based on current game state
      */
-    private void setupCapturedPiecesDisplay() {
-        // Clear existing captured pieces
-        if (capturedWhitePieces != null) {
-            capturedWhitePieces.getChildren().clear();
-            // Add some sample captured white pieces
-            addCapturedPiece(capturedWhitePieces, "wq", 24);
-            addCapturedPiece(capturedWhitePieces, "wb", 24);
-            addCapturedPiece(capturedWhitePieces, "wp", 24);
-            addCapturedPiece(capturedWhitePieces, "wp", 24);
-        }
-        
-        if (capturedBlackPieces != null) {
-            capturedBlackPieces.getChildren().clear();
-            // Add some sample captured black pieces
-            addCapturedPiece(capturedBlackPieces, "bq", 24);
-            addCapturedPiece(capturedBlackPieces, "bn", 24);
-            addCapturedPiece(capturedBlackPieces, "bp", 24);
+    private void updateGameStatusDisplay() {
+        if (gameState != null) {
+            // Update current player
+            String currentPlayerText = gameState.getCurrentPlayer() == com.himelz.nexusboard.model.Color.WHITE ? 
+                "White to move" : "Black to move";
+            if (gameStatusLabel != null) gameStatusLabel.setText(currentPlayerText);
+            
+            // Update turn number
+            int moveNumber = gameState.getMoveHistory().size() / 2 + 1;
+            if (turnLabel != null) turnLabel.setText("Move: " + moveNumber);
+            
+            // Set game mode
+            if (gameModeLabel != null) gameModeLabel.setText("Mode: Single Player");
+            
+            // Update player status
+            if (gameState.getCurrentPlayer() == com.himelz.nexusboard.model.Color.WHITE) {
+                if (whiteStatus != null) whiteStatus.setText("Your turn");
+                if (blackStatus != null) blackStatus.setText("Waiting...");
+            } else {
+                if (blackStatus != null) blackStatus.setText("Your turn");
+                if (whiteStatus != null) whiteStatus.setText("Waiting...");
+            }
         }
     }
+    
+
     
     /**
      * Add a captured piece to the display
@@ -400,12 +655,7 @@ public class GameScreen implements Initializable {
             }
         });
         
-        // Add some sample moves for demonstration
-        moveHistoryList.getItems().addAll(
-            "1. e4 e5",
-            "2. Nf3 Nc6", 
-            "3. Bb5 a6"
-        );
+        // Move history starts empty
     }
     
     /**
@@ -418,27 +668,47 @@ public class GameScreen implements Initializable {
         drawButton.setOnAction(e -> handleOfferDraw());
     }
     
-    // Event handler methods (placeholders for future game logic)
+    // Event handler methods - fully functional game logic
     
     private void handleNewGame() {
-        statusLabel.setText("New game started");
-        // Reset board to initial position
+        if (statusLabel != null) statusLabel.setText("New game started");
+        // Create new game state and refresh board
+        gameState = new GameState();
+        clearSelection();
         initializeChessBoard();
         setupInitialGameState();
-        moveHistoryList.getItems().clear();
+        if (moveHistoryList != null) moveHistoryList.getItems().clear();
+        enableGameControls();
     }
     
     private void handleUndo() {
-        statusLabel.setText("Undo move requested");
+        // TODO: Implement undo functionality when GameState supports it
+        if (statusLabel != null) statusLabel.setText("Undo not yet implemented");
     }
     
     private void handleResign() {
-        statusLabel.setText("Game resigned");
-        gameStatusLabel.setText("Game Over - Resignation");
+        if (gameState.getGameStatus() == GameState.GameStatus.ACTIVE || 
+            gameState.getGameStatus() == GameState.GameStatus.CHECK) {
+            
+            var currentPlayer = gameState.getCurrentPlayer();
+            var winner = currentPlayer.opposite();
+            
+            if (statusLabel != null) statusLabel.setText(currentPlayer + " resigned. " + winner + " wins!");
+            if (gameStatusLabel != null) gameStatusLabel.setText("Game Over - " + winner + " wins by resignation");
+            
+            disableGameControls();
+        }
     }
     
     private void handleOfferDraw() {
-        statusLabel.setText("Draw offered");
+        if (gameState.getGameStatus() == GameState.GameStatus.ACTIVE || 
+            gameState.getGameStatus() == GameState.GameStatus.CHECK) {
+            
+            if (statusLabel != null) statusLabel.setText("Draw offered (auto-accepted in single player)");
+            if (gameStatusLabel != null) gameStatusLabel.setText("Game Over - Draw by agreement");
+            
+            disableGameControls();
+        }
     }
     
     /**
@@ -473,6 +743,21 @@ public class GameScreen implements Initializable {
         if (gameStatusLabel != null) {
             gameStatusLabel.setText(status);
         }
+    }
+    
+    /**
+     * Refresh the board display with current game state
+     */
+    public void refreshBoard() {
+        initializeChessBoard();
+        updateGameStatusDisplay();
+    }
+    
+    /**
+     * Get the current game state
+     */
+    public GameState getGameState() {
+        return gameState;
     }
     
     /**

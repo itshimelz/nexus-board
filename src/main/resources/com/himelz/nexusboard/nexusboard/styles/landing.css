@@ -1,3 +1,196 @@
 /* Nexus Board Landing Page Styles */
 
-.root {\n    -fx-font-family: \"Segoe UI\", \"Arial\", sans-serif;\n}\n\n/* Button Hover Effects */\n.button:hover {\n    -fx-cursor: hand;\n    -fx-scale-x: 1.05;\n    -fx-scale-y: 1.05;\n    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 2);\n}\n\n/* Primary Button Styles */\n.primary-button {\n    -fx-background-color: #27ae60;\n    -fx-text-fill: white;\n    -fx-background-radius: 25;\n    -fx-font-size: 16px;\n    -fx-font-weight: bold;\n    -fx-padding: 15 30;\n    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);\n}\n\n.primary-button:hover {\n    -fx-background-color: #2ecc71;\n}\n\n/* Secondary Button Styles */\n.secondary-button {\n    -fx-background-color: #3498db;\n    -fx-text-fill: white;\n    -fx-background-radius: 25;\n    -fx-font-size: 16px;\n    -fx-font-weight: bold;\n    -fx-padding: 15 30;\n    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);\n}\n\n.secondary-button:hover {\n    -fx-background-color: #5dade2;\n}\n\n/* Settings Button Styles */\n.settings-button {\n    -fx-background-color: #f39c12;\n    -fx-text-fill: white;\n    -fx-background-radius: 20;\n    -fx-font-size: 14px;\n    -fx-padding: 10 25;\n    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);\n}\n\n.settings-button:hover {\n    -fx-background-color: #f5b041;\n}\n\n/* About Button Styles */\n.about-button {\n    -fx-background-color: #9b59b6;\n    -fx-text-fill: white;\n    -fx-background-radius: 20;\n    -fx-font-size: 14px;\n    -fx-padding: 10 25;\n    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);\n}\n\n.about-button:hover {\n    -fx-background-color: #bb8fce;\n}\n\n/* Exit Button Styles */\n.exit-button {\n    -fx-background-color: #e74c3c;\n    -fx-text-fill: white;\n    -fx-background-radius: 20;\n    -fx-font-size: 14px;\n    -fx-padding: 10 25;\n    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);\n}\n\n.exit-button:hover {\n    -fx-background-color: #ec7063;\n}\n\n/* Card Container */\n.card {\n    -fx-background-color: white;\n    -fx-background-radius: 15;\n    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);\n    -fx-padding: 30;\n}\n\n/* Header Styles */\n.header {\n    -fx-background-color: linear-gradient(to bottom, #2c3e50, #34495e);\n    -fx-padding: 40;\n}\n\n/* Title Text */\n.title-text {\n    -fx-fill: white;\n    -fx-font-family: \"Arial Bold\";\n    -fx-font-size: 48;\n    -fx-font-weight: bold;\n}\n\n/* Subtitle Text */\n.subtitle-text {\n    -fx-fill: #ecf0f1;\n    -fx-font-family: \"Arial\";\n    -fx-font-size: 18;\n}\n\n/* Welcome Label */\n.welcome-label {\n    -fx-text-fill: white;\n    -fx-font-family: \"Arial\";\n    -fx-font-size: 16;\n}\n\n/* Main Content Area */\n.main-content {\n    -fx-background-color: #ecf0f1;\n    -fx-padding: 50;\n}\n\n/* Feature Highlight */\n.feature-highlight {\n    -fx-alignment: center;\n    -fx-spacing: 10;\n    -fx-max-width: 150;\n}\n\n.feature-icon {\n    -fx-fill: #2c3e50;\n    -fx-font-size: 36;\n}\n\n.feature-title {\n    -fx-text-fill: #2c3e50;\n    -fx-font-family: \"Arial Bold\";\n    -fx-font-size: 12;\n    -fx-font-weight: bold;\n    -fx-alignment: center;\n    -fx-text-alignment: center;\n    -fx-wrap-text: true;\n}\n\n.feature-description {\n    -fx-text-fill: #7f8c8d;\n    -fx-font-family: \"Arial\";\n    -fx-font-size: 10;\n    -fx-alignment: center;\n    -fx-text-alignment: center;\n    -fx-wrap-text: true;\n}\n\n/* Footer */\n.footer {\n    -fx-background-color: #34495e;\n    -fx-padding: 15;\n}\n\n.footer-text {\n    -fx-text-fill: #bdc3c7;\n    -fx-font-family: \"Arial\";\n    -fx-font-size: 12;\n}\n\n/* Loading Overlay */\n.loading-overlay {\n    -fx-background-color: rgba(0,0,0,0.7);\n    -fx-alignment: center;\n    -fx-spacing: 20;\n}\n\n.loading-text {\n    -fx-text-fill: white;\n    -fx-font-family: \"Arial\";\n    -fx-font-size: 16;\n}\n\n/* Smooth Transitions */\n.button {\n    -fx-transition: all 0.3s ease;\n}\n\n/* Menu Title */\n.menu-title {\n    -fx-text-fill: #2c3e50;\n    -fx-font-family: \"Arial Bold\";\n    -fx-font-size: 24;\n    -fx-font-weight: bold;\n}
+.root {
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+/* Button Hover Effects */
+.button:hover {
+    -fx-cursor: hand;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 2);
+}
+
+/* Primary Button Styles */
+.primary-button {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-background-radius: 25;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 15 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.primary-button:hover {
+    -fx-background-color: #2ecc71;
+}
+
+/* Secondary Button Styles */
+.secondary-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 25;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 15 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.secondary-button:hover {
+    -fx-background-color: #5dade2;
+}
+
+/* Settings Button Styles */
+.settings-button {
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-font-size: 14px;
+    -fx-padding: 10 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.settings-button:hover {
+    -fx-background-color: #f5b041;
+}
+
+/* About Button Styles */
+.about-button {
+    -fx-background-color: #9b59b6;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-font-size: 14px;
+    -fx-padding: 10 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.about-button:hover {
+    -fx-background-color: #bb8fce;
+}
+
+/* Exit Button Styles */
+.exit-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-font-size: 14px;
+    -fx-padding: 10 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.exit-button:hover {
+    -fx-background-color: #ec7063;
+}
+
+/* Card Container */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+    -fx-padding: 30;
+}
+
+/* Header Styles */
+.header {
+    -fx-background-color: linear-gradient(to bottom, #2c3e50, #34495e);
+    -fx-padding: 40;
+}
+
+/* Title Text */
+.title-text {
+    -fx-fill: white;
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 48;
+    -fx-font-weight: bold;
+}
+
+/* Subtitle Text */
+.subtitle-text {
+    -fx-fill: #ecf0f1;
+    -fx-font-family: "Arial";
+    -fx-font-size: 18;
+}
+
+/* Welcome Label */
+.welcome-label {
+    -fx-text-fill: white;
+    -fx-font-family: "Arial";
+    -fx-font-size: 16;
+}
+
+/* Main Content Area */
+.main-content {
+    -fx-background-color: #ecf0f1;
+    -fx-padding: 50;
+}
+
+/* Feature Highlight */
+.feature-highlight {
+    -fx-alignment: center;
+    -fx-spacing: 10;
+    -fx-max-width: 150;
+}
+
+.feature-icon {
+    -fx-fill: #2c3e50;
+    -fx-font-size: 36;
+}
+
+.feature-title {
+    -fx-text-fill: #2c3e50;
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+
+.feature-description {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-family: "Arial";
+    -fx-font-size: 10;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+
+/* Footer */
+.footer {
+    -fx-background-color: #34495e;
+    -fx-padding: 15;
+}
+
+.footer-text {
+    -fx-text-fill: #bdc3c7;
+    -fx-font-family: "Arial";
+    -fx-font-size: 12;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    -fx-background-color: rgba(0,0,0,0.7);
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+.loading-text {
+    -fx-text-fill: white;
+    -fx-font-family: "Arial";
+    -fx-font-size: 16;
+}
+
+/* Smooth Transitions */
+.button {
+    -fx-transition: all 0.3s ease;
+}
+
+/* Menu Title */
+.menu-title {
+    -fx-text-fill: #2c3e50;
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+}

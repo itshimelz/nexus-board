@@ -29,7 +29,7 @@ public class LandingScreenViewModel {
         this.versionInfo = new SimpleStringProperty("Version 1.0.0");
         this.isLoading = new SimpleBooleanProperty(false);
         this.singlePlayerEnabled = new SimpleBooleanProperty(true);
-        this.multiplayerEnabled = new SimpleBooleanProperty(true);
+        this.multiplayerEnabled = new SimpleBooleanProperty(false);
         this.settingsEnabled = new SimpleBooleanProperty(true);
     }
     

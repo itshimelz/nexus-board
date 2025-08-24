@@ -69,7 +69,7 @@
                   <!-- Settings Button -->
                   <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#onSettingsClick"
                           prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-size: 14px;" 
-                          text="⚙️ Settings">
+                          text="Settings">
                      <cursor>
                         <javafx.scene.Cursor fx:constant="HAND" />
                      </cursor>
@@ -78,7 +78,7 @@
                   <!-- About Button -->
                   <Button fx:id="aboutButton" mnemonicParsing="false" onAction="#onAboutClick"
                           prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-size: 14px;" 
-                          text="ℹ️ About">
+                          text="About">
                      <cursor>
                         <javafx.scene.Cursor fx:constant="HAND" />
                      </cursor>
@@ -87,7 +87,7 @@
                   <!-- Exit Button -->
                   <Button fx:id="exitButton" mnemonicParsing="false" onAction="#onExitClick"
                           prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-size: 14px;" 
-                          text="🚪 Exit">
+                          text="Exit">
                      <cursor>
                         <javafx.scene.Cursor fx:constant="HAND" />
                      </cursor>

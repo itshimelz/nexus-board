@@ -9,27 +9,6 @@
 <?import java.lang.String?>
 <BorderPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
    
-   <!-- Top Menu Bar -->
-   <top>
-      <MenuBar>
-        <menus>
-          <Menu mnemonicParsing="false" text="Game">
-            <items>
-              <MenuItem mnemonicParsing="false" text="New Game" />
-              <MenuItem mnemonicParsing="false" text="Back to Main Menu" />
-              <MenuItem mnemonicParsing="false" text="Exit" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="View">
-            <items>
-              <CheckMenuItem mnemonicParsing="false" text="Show Coordinates" selected="true" />
-              <MenuItem mnemonicParsing="false" text="Flip Board" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
-   
    <!-- Main Game Content -->
    <center>
       <HBox spacing="20.0" style="-fx-background-color: #f8f9fa; -fx-padding: 20;">

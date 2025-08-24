@@ -1,11 +1,12 @@
-module com.himelz.nexusboard {
+open module com.himelz.nexusboard {
+    requires java.base;
+    requires java.desktop;
     requires javafx.controls;
     requires javafx.fxml;
-    requires com.dlsc.formsfx;
+    requires javafx.graphics;
 
-    // Export main package
-//    exports com.himelz.nexusboard;
-    exports com.himelz.nexusboard.app;
+    // Export app package
+//    exports com.himelz.nexusboard.app;
     
     // Export model packages
     exports com.himelz.nexusboard.model;
@@ -20,8 +21,4 @@ module com.himelz.nexusboard {
     
     // Export utils package
     exports com.himelz.nexusboard.utils;
-    
-    // Open packages to JavaFX for FXML injection
-    opens com.himelz.nexusboard.app to javafx.fxml;
-    opens com.himelz.nexusboard.viewController to javafx.fxml;
 }

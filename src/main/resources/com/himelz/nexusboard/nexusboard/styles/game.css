@@ -72,6 +72,17 @@
     -fx-border-width: 2px;
 }
 
+.possible-move {
+    -fx-background-color: rgba(0, 255, 0, 0.3);
+    -fx-border-color: #32CD32;
+    -fx-border-width: 2px;
+    -fx-border-radius: 50%;
+}
+
+.possible-move:hover {
+    -fx-background-color: rgba(0, 255, 0, 0.5);
+}
+
 /* Chess Pieces */
 .chess-piece {
     -fx-font-size: 42px;
