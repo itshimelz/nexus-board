@@ -10,14 +10,19 @@ import java.util.Enumeration;
 import com.himelz.nexusboard.viewController.MultiplayerMenu;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import com.himelz.nexusboard.network.Server;
+import com.himelz.nexusboard.model.GameState;
 
 /**
  * ViewModel for the Host Game Dialog following MVVM pattern.
  * Handles server hosting logic and state management.
  */
-public class HostGameDialogViewModel {
+public class HostGameDialogViewModel implements Server.ServerListener {
 
     private final Stage primaryStage;
+    
+    // Server instance
+    private Server gameServer;
 
     // Observable Properties for UI Binding
     private final StringProperty playerName;
@@ -96,58 +101,135 @@ public class HostGameDialogViewModel {
             return;
         }
 
-        statusMessage.set("Starting server...");
+        String name = playerName.get().trim();
+        if (name.isEmpty()) {
+            statusMessage.set("Please enter your player name");
+            return;
+        }
 
-        // TODO: Implement actual server starting logic
-        // For now, simulate the server starting process
-        new Thread(() -> {
-            try {
-                Thread.sleep(2000); // Simulate server startup time
-                Platform.runLater(() -> {
-                    isServerRunning.set(true);
-                    statusMessage.set("Server running - Waiting for players");
-                    playerCount.set("Players connected: 0/2");
-
-                    // TODO: Start actual server here
-                    System.out.println("Server started on " + ipAddress.get() + ":" + port.get());
-                    System.out.println("Player: " + playerName.get());
-                });
-            } catch (InterruptedException e) {
-                Platform.runLater(() -> {
-                    statusMessage.set("Failed to start server");
-                });
+        try {
+            int serverPort = Integer.parseInt(port.get().trim());
+            if (serverPort < 1 || serverPort > 65535) {
+                statusMessage.set("Port must be between 1 and 65535");
+                return;
             }
-        }).start();
+
+            statusMessage.set("Starting server...");
+
+            // Create and configure server
+            gameServer = new Server(serverPort);
+            gameServer.addServerListener(this);
+
+            // Start server in background thread
+            new Thread(() -> {
+                boolean started = gameServer.start();
+                Platform.runLater(() -> {
+                    if (started) {
+                        isServerRunning.set(true);
+                        statusMessage.set("Server running - Waiting for players");
+                        System.out.println("Host player: " + name);
+                    } else {
+                        statusMessage.set("Failed to start server - Port may be in use");
+                        gameServer = null;
+                    }
+                });
+            }).start();
+
+        } catch (NumberFormatException e) {
+            statusMessage.set("Invalid port number");
+        } catch (Exception e) {
+            statusMessage.set("Error starting server: " + e.getMessage());
+        }
     }
 
     /**
      * Stop the game server
      */
     public void stopServer() {
-        if (!isServerRunning.get()) {
+        if (!isServerRunning.get() || gameServer == null) {
             return;
         }
 
         statusMessage.set("Stopping server...");
 
-        // TODO: Implement actual server stopping logic
+        // Stop server in background thread
         new Thread(() -> {
             try {
-                Thread.sleep(1000); // Simulate server shutdown time
+                gameServer.stop();
                 Platform.runLater(() -> {
+                    gameServer = null;
                     isServerRunning.set(false);
                     statusMessage.set("Server stopped");
                     playerCount.set("Players connected: 0/2");
-
-                    // TODO: Stop actual server here
-                    System.out.println("Server stopped");
                 });
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 Platform.runLater(() -> {
-                    statusMessage.set("Error stopping server");
+                    statusMessage.set("Error stopping server: " + e.getMessage());
                 });
             }
         }).start();
+    }
+
+    // ServerListener implementation methods
+    
+    @Override
+    public void onServerStarted(int port) {
+        Platform.runLater(() -> {
+            statusMessage.set("Server started on port " + port + " - Waiting for players");
+        });
+    }
+    
+    @Override
+    public void onServerStopped() {
+        Platform.runLater(() -> {
+            statusMessage.set("Server stopped");
+            playerCount.set("Players connected: 0/2");
+        });
+    }
+    
+    @Override
+    public void onPlayerConnected(String playerId, String playerName) {
+        Platform.runLater(() -> {
+            int currentCount = gameServer != null ? gameServer.getConnectedClientsCount() : 0;
+            playerCount.set("Players connected: " + currentCount + "/2");
+            
+            if (currentCount == 1) {
+                statusMessage.set("First player connected: " + playerName);
+            } else if (currentCount == 2) {
+                statusMessage.set("Game full - Starting match!");
+                // TODO: Transition to game screen when both players are ready
+            }
+        });
+    }
+    
+    @Override
+    public void onPlayerDisconnected(String playerId) {
+        Platform.runLater(() -> {
+            int currentCount = gameServer != null ? gameServer.getConnectedClientsCount() : 0;
+            playerCount.set("Players connected: " + currentCount + "/2");
+            statusMessage.set("Player disconnected - Waiting for players");
+        });
+    }
+    
+    @Override
+    public void onGameStateChanged(GameState gameState) {
+        // Handle game state changes if needed
+        Platform.runLater(() -> {
+            System.out.println("Game state changed: " + gameState.getCurrentPlayer());
+        });
+    }
+    
+    @Override
+    public void onError(String error) {
+        Platform.runLater(() -> {
+            statusMessage.set("Error: " + error);
+        });
+    }
+    
+    @Override
+    public void onMessageReceived(String playerId, String message) {
+        // Handle messages received by server
+        System.out.println("Message from " + playerId + ": " + message);
     }
 
     /**

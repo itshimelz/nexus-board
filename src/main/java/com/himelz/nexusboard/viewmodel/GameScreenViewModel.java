@@ -5,6 +5,10 @@ import com.himelz.nexusboard.model.GameState;
 import com.himelz.nexusboard.model.board.Move;
 import com.himelz.nexusboard.model.board.Position;
 import com.himelz.nexusboard.model.pieces.ChessPiece;
+import com.himelz.nexusboard.network.Client;
+import com.himelz.nexusboard.network.Server;
+import com.himelz.nexusboard.utils.MoveValidator;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,77 +18,109 @@ import java.util.List;
 /**
  * ViewModel for the Game Screen following MVVM pattern.
  * Handles all game logic, state management, and provides observable properties for UI binding.
+ * Supports both local and networked multiplayer gameplay.
  */
-public class GameScreenViewModel {
+public class GameScreenViewModel implements Client.ClientListener {
     
     // Game Model
     private GameState gameState;
     
+    // Networking Components
+    private Client gameClient;
+    private Server gameServer;
+    private boolean isHost;
+    private boolean isNetworkGame;
+    private Color localPlayerColor;
+    private String localPlayerId;
+    
     // Observable Properties for UI Binding
-    private final StringProperty gameStatusMessage;
-    private final StringProperty currentPlayerTurn;
-    private final StringProperty gameModeText;
-    private final StringProperty whitePlayerName;
-    private final StringProperty blackPlayerName;
-    private final StringProperty whiteTimer;
-    private final StringProperty blackTimer;
-    private final StringProperty evaluationText;
-    private final StringProperty bestMoveText;
-    private final StringProperty gameProgressText;
-    private final StringProperty materialBalanceText;
-    private final StringProperty lastMoveText;
-    private final StringProperty checkStatusText;
-    private final BooleanProperty isGameActive;
-    private final BooleanProperty isWhiteTurn;
-    private final BooleanProperty canUndo;
-    private final BooleanProperty canResign;
-    private final BooleanProperty canOfferDraw;
-    private final BooleanProperty isCheckStatusVisible;
+    private final StringProperty gameStatusMessage = new SimpleStringProperty();
+    private final StringProperty currentPlayerTurn = new SimpleStringProperty();
+    private final StringProperty gameModeText = new SimpleStringProperty();
+    private final StringProperty whitePlayerName = new SimpleStringProperty();
+    private final StringProperty blackPlayerName = new SimpleStringProperty();
+    private final StringProperty whiteTimer = new SimpleStringProperty();
+    private final StringProperty blackTimer = new SimpleStringProperty();
+    private final StringProperty evaluationText = new SimpleStringProperty();
+    private final StringProperty bestMoveText = new SimpleStringProperty();
+    private final StringProperty gameProgressText = new SimpleStringProperty();
+    private final StringProperty materialBalanceText = new SimpleStringProperty();
+    private final StringProperty lastMoveText = new SimpleStringProperty();
+    private final StringProperty checkStatusText = new SimpleStringProperty();
+    private final BooleanProperty isGameActive = new SimpleBooleanProperty();
+    private final BooleanProperty isWhiteTurn = new SimpleBooleanProperty();
+    private final BooleanProperty canUndo = new SimpleBooleanProperty();
+    private final BooleanProperty canResign = new SimpleBooleanProperty();
+    private final BooleanProperty canOfferDraw = new SimpleBooleanProperty();
+    private final BooleanProperty isCheckStatusVisible = new SimpleBooleanProperty();
     
     // Move History
-    private final ObservableList<String> moveHistory;
+    private final ObservableList<String> moveHistory = FXCollections.observableArrayList();
     
     // Current Selection State
-    private final ObjectProperty<Position> selectedPosition;
-    private final ListProperty<Position> validMoves;
+    private final ObjectProperty<Position> selectedPosition = new SimpleObjectProperty<>();
+    private final ListProperty<Position> validMoves = new SimpleListProperty<>(FXCollections.observableArrayList());
     
     // Board State Observable Property
-    private final ObjectProperty<ChessPiece[][]> boardState;
+    private final ObjectProperty<ChessPiece[][]> boardState = new SimpleObjectProperty<>();
     
     public GameScreenViewModel() {
+        this.isNetworkGame = false;
+        this.isHost = false;
+        this.gameState = new GameState();
+        initializeProperties();
+        initializeGame();
+    }
+    
+    /**
+     * Constructor for network games
+     * @param client The client connection (for both host and join)
+     * @param server The server instance (null if joining a game)
+     * @param isHost Whether this player is hosting the game
+     * @param localPlayerColor The color assigned to the local player
+     * @param localPlayerId The ID of the local player
+     */
+    public GameScreenViewModel(Client client, Server server, boolean isHost, 
+                               Color localPlayerColor, String localPlayerId) {
+        this.isNetworkGame = true;
+        this.isHost = isHost;
+        this.gameClient = client;
+        this.gameServer = server;
+        this.localPlayerColor = localPlayerColor;
+        this.localPlayerId = localPlayerId;
         this.gameState = new GameState();
         
-        // Initialize observable properties
-        this.gameStatusMessage = new SimpleStringProperty();
-        this.currentPlayerTurn = new SimpleStringProperty();
-        this.gameModeText = new SimpleStringProperty("Single Player");
-        this.whitePlayerName = new SimpleStringProperty("White Player");
-        this.blackPlayerName = new SimpleStringProperty("Black Player");
-        this.whiteTimer = new SimpleStringProperty("∞");
-        this.blackTimer = new SimpleStringProperty("∞");
-        this.evaluationText = new SimpleStringProperty("0.0");
-        this.bestMoveText = new SimpleStringProperty("...");
-        this.gameProgressText = new SimpleStringProperty("Opening");
-        this.materialBalanceText = new SimpleStringProperty("Equal");
-        this.lastMoveText = new SimpleStringProperty("--");
-        this.checkStatusText = new SimpleStringProperty("Check!");
-        this.isGameActive = new SimpleBooleanProperty(true);
-        this.isWhiteTurn = new SimpleBooleanProperty(true);
-        this.canUndo = new SimpleBooleanProperty(false);
-        this.canResign = new SimpleBooleanProperty(true);
-        this.canOfferDraw = new SimpleBooleanProperty(true);
-        this.isCheckStatusVisible = new SimpleBooleanProperty(false);
+        // Set up client listener for network events
+        if (gameClient != null) {
+            gameClient.addClientListener(this);
+        }
         
-        // Initialize collections
-        this.moveHistory = FXCollections.observableArrayList();
-        this.selectedPosition = new SimpleObjectProperty<>();
-        this.validMoves = new SimpleListProperty<>(FXCollections.observableArrayList());
-        
-        // Initialize board state property
-        this.boardState = new SimpleObjectProperty<>();
-        
-        // Initialize game state
-        initializeGame();
+        initializeProperties();
+        initializeNetworkGame();
+    }
+    
+    /**
+     * Initialize all observable properties with default values
+     */
+    private void initializeProperties() {
+        // Set initial values for properties
+        gameModeText.set(isNetworkGame ? "Multiplayer" : "Single Player");
+        whitePlayerName.set("White Player");
+        blackPlayerName.set("Black Player");
+        whiteTimer.set("∞");
+        blackTimer.set("∞");
+        evaluationText.set("0.0");
+        bestMoveText.set("...");
+        gameProgressText.set("Opening");
+        materialBalanceText.set("Equal");
+        lastMoveText.set("--");
+        checkStatusText.set("Check!");
+        isGameActive.set(true);
+        isWhiteTurn.set(true);
+        canUndo.set(false);
+        canResign.set(true);
+        canOfferDraw.set(true);
+        isCheckStatusVisible.set(false);
     }
     
     /**
@@ -94,6 +130,33 @@ public class GameScreenViewModel {
         updateGameStatusDisplay();
         updateBoardState();
         clearSelection();
+    }
+    
+    /**
+     * Initialize network game specific setup
+     */
+    private void initializeNetworkGame() {
+        // Set player names based on network role
+        if (isHost) {
+            if (localPlayerColor == Color.WHITE) {
+                whitePlayerName.set("You (Host)");
+                blackPlayerName.set("Opponent");
+            } else {
+                whitePlayerName.set("Opponent");
+                blackPlayerName.set("You (Host)");
+            }
+        } else {
+            if (localPlayerColor == Color.WHITE) {
+                whitePlayerName.set("You");
+                blackPlayerName.set("Host");
+            } else {
+                whitePlayerName.set("Host");
+                blackPlayerName.set("You");
+            }
+        }
+        
+        // Start the game
+        initializeGame();
     }
     
     /**
@@ -238,7 +301,20 @@ public class GameScreenViewModel {
      * Attempt to make a move
      */
     private boolean attemptMove(Position from, Position to) {
-        // Use GameState's makeMove method which handles validation internally
+        // Use MoveValidator for pre-validation
+        if (isNetworkGame) {
+            // For network games, only validate if it's our turn
+            if (!MoveValidator.isPlayerTurn(gameState, localPlayerColor)) {
+                return false; // Not our turn
+            }
+        }
+        
+        // Basic position validation
+        if (!MoveValidator.areValidPositions(from, to)) {
+            return false;
+        }
+        
+        // Use GameState's makeMove method which handles full chess rule validation
         boolean moveSuccessful = gameState.makeMove(from, to);
         
         if (moveSuccessful) {
@@ -254,10 +330,46 @@ public class GameScreenViewModel {
             updateBoardState();
             clearSelection();
             
+            // Send move over network if this is a network game
+            if (isNetworkGame && gameClient != null) {
+                ChessPiece finalPiece = gameState.getBoard().getPiece(to); // Piece is now at destination
+                Move networkMove = new Move(from, to, finalPiece);
+                gameClient.sendMove(networkMove);
+            }
+            
             return true;
         }
         
         return false;
+    }
+
+    /**
+     * Process a move received from the network (for opponent moves)
+     */
+    private void processNetworkMove(Move move) {
+        Platform.runLater(() -> {
+            // Apply the move to our local game state
+            boolean moveSuccessful = gameState.makeMove(move);
+            
+            if (moveSuccessful) {
+                // Add move to history
+                String moveNotation = formatSimpleMoveNotation(move.getFrom(), move.getTo());
+                moveHistory.add(moveNotation);
+                
+                // Update last move display
+                lastMoveText.set(moveNotation);
+                
+                // Update displays
+                updateGameStatusDisplay();
+                updateBoardState();
+                clearSelection();
+                
+                System.out.println("Applied network move: " + moveNotation);
+            } else {
+                System.err.println("Failed to apply network move: " + 
+                    move.getFrom().toAlgebraic() + " -> " + move.getTo().toAlgebraic());
+            }
+        });
     }
     
     /**
@@ -375,5 +487,127 @@ public class GameScreenViewModel {
     public boolean isSquareSelected(Position position) {
         Position selected = selectedPosition.get();
         return selected != null && selected.equals(position);
+    }
+
+    // ============ Network Game Methods ============
+    
+    /**
+     * Check if the local player can make moves (their turn)
+     */
+    public boolean canMakeMove() {
+        if (!isNetworkGame) {
+            return true; // In local games, both players can move
+        }
+        return MoveValidator.isPlayerTurn(gameState, localPlayerColor);
+    }
+    
+    /**
+     * Get information about the network game setup
+     */
+    public String getNetworkGameInfo() {
+        if (!isNetworkGame) {
+            return "Local Game";
+        }
+        
+        String role = isHost ? "Host" : "Client";
+        String color = localPlayerColor == Color.WHITE ? "White" : "Black";
+        return String.format("%s playing as %s", role, color);
+    }
+
+    // ============ ClientListener Implementation ============
+    
+    @Override
+    public void onConnected() {
+        Platform.runLater(() -> {
+            gameStatusMessage.set("Connected to game server");
+            System.out.println("Game screen: Connected to server");
+        });
+    }
+
+    @Override
+    public void onDisconnected() {
+        Platform.runLater(() -> {
+            gameStatusMessage.set("Disconnected from game server");
+            isGameActive.set(false);
+            System.out.println("Game screen: Disconnected from server");
+        });
+    }
+
+    @Override
+    public void onJoinedGame(String gameId, String playerId) {
+        Platform.runLater(() -> {
+            gameStatusMessage.set("Joined game: " + gameId);
+            System.out.println("Game screen: Joined game " + gameId + " as " + playerId);
+        });
+    }
+
+    @Override
+    public void onPlayerJoined(String playerId, String playerName) {
+        Platform.runLater(() -> {
+            gameStatusMessage.set("Player joined: " + playerName);
+            System.out.println("Game screen: Player joined - " + playerName + " (" + playerId + ")");
+        });
+    }
+
+    @Override
+    public void onPlayerLeft(String playerId) {
+        Platform.runLater(() -> {
+            gameStatusMessage.set("Player left the game");
+            isGameActive.set(false);
+            System.out.println("Game screen: Player left - " + playerId);
+        });
+    }
+
+    @Override
+    public void onGameStarted() {
+        Platform.runLater(() -> {
+            gameStatusMessage.set("Game started! " + getNetworkGameInfo());
+            isGameActive.set(true);
+            System.out.println("Game screen: Game started");
+        });
+    }
+
+    @Override
+    public void onGameStateUpdated(GameState gameState) {
+        Platform.runLater(() -> {
+            // Update our local game state with the server's authoritative state
+            this.gameState = gameState;
+            updateGameStatusDisplay();
+            updateBoardState();
+            System.out.println("Game screen: Game state updated from server");
+        });
+    }
+
+    @Override
+    public void onMoveReceived(String playerId, Move move) {
+        // Only process moves from other players (not our own moves echoed back)
+        if (!playerId.equals(localPlayerId)) {
+            processNetworkMove(move);
+            System.out.println("Game screen: Move received from " + playerId);
+        }
+    }
+
+    @Override
+    public void onChatReceived(String playerId, String playerName, String message) {
+        Platform.runLater(() -> {
+            // TODO: Display chat message in game UI
+            System.out.println("Game screen: Chat from " + playerName + ": " + message);
+        });
+    }
+
+    @Override
+    public void onError(String error) {
+        Platform.runLater(() -> {
+            gameStatusMessage.set("Network error: " + error);
+            System.err.println("Game screen: Network error - " + error);
+        });
+    }
+
+    @Override
+    public void onMessage(String message) {
+        Platform.runLater(() -> {
+            gameStatusMessage.set(message);
+            System.out.println("Game screen: Server message - " + message);
+        });
     }
 }

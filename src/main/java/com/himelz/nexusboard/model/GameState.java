@@ -323,6 +323,47 @@ public class GameState {
         return null; // No winner
     }
 
+    // Additional methods for multiplayer networking
+
+    /**
+     * Makes a move using a Move object (overloaded method for networking)
+     */
+    public boolean makeMove(Move move) {
+        return makeMove(move.getFrom(), move.getTo());
+    }
+
+    /**
+     * Sets the host player information
+     */
+    public void setHostPlayer(String playerId, String playerName) {
+        // Store host player info (could be expanded to include in game state)
+        // For now, this is a placeholder for networking integration
+        System.out.println("Host player set: " + playerName + " (" + playerId + ")");
+    }
+
+    /**
+     * Sets the guest player information
+     */
+    public void setGuestPlayer(String playerId, String playerName) {
+        // Store guest player info (could be expanded to include in game state)
+        // For now, this is a placeholder for networking integration
+        System.out.println("Guest player set: " + playerName + " (" + playerId + ")");
+    }
+
+    /**
+     * Gets the host player's color (white)
+     */
+    public Color getHostColor() {
+        return Color.WHITE; // Host always plays white
+    }
+
+    /**
+     * Gets the guest player's color (black)
+     */
+    public Color getGuestColor() {
+        return Color.BLACK; // Guest always plays black
+    }
+
     public enum GameStatus {
         ACTIVE,
         CHECK,

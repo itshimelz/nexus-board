@@ -10,15 +10,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import com.himelz.nexusboard.network.Client;
+import com.himelz.nexusboard.model.GameState;
+import com.himelz.nexusboard.model.board.Move;
 
 /**
  * ViewModel for the Join Game Dialog following MVVM pattern.
  * Handles client connection logic and state management.
  */
-public class JoinGameDialogViewModel {
+public class JoinGameDialogViewModel implements Client.ClientListener {
     
     private final Stage primaryStage;
     private static final String RECENT_CONNECTIONS_FILE = "recent_connections.txt";
+    
+    // Client instance
+    private Client gameClient;
     
     // Observable Properties for UI Binding
     private final StringProperty playerName;
@@ -42,6 +48,126 @@ public class JoinGameDialogViewModel {
         this.isConnecting = new SimpleBooleanProperty(false);
         this.isConnected = new SimpleBooleanProperty(false);
         this.recentConnections = FXCollections.observableArrayList();
+    }
+
+    // ============ ClientListener Implementation ============
+    
+    @Override
+    public void onConnected() {
+        Platform.runLater(() -> {
+            isConnecting.set(false);
+            isConnected.set(true);
+            statusMessage.set("Connected to server! Waiting for game to start...");
+            System.out.println("Successfully connected to server");
+        });
+    }
+
+    @Override
+    public void onDisconnected() {
+        Platform.runLater(() -> {
+            isConnecting.set(false);
+            isConnected.set(false);
+            statusMessage.set("Disconnected from server");
+            gameClient = null;
+            System.out.println("Disconnected from server");
+        });
+    }
+
+    @Override
+    public void onJoinedGame(String gameId, String playerId) {
+        Platform.runLater(() -> {
+            statusMessage.set("Joined game: " + gameId + " as " + playerId);
+            System.out.println("Joined game: " + gameId + " as player: " + playerId);
+        });
+    }
+
+    @Override
+    public void onPlayerJoined(String playerId, String playerName) {
+        Platform.runLater(() -> {
+            statusMessage.set("Player joined: " + playerName + " (" + playerId + ")");
+            System.out.println("Player joined: " + playerName + " (ID: " + playerId + ")");
+        });
+    }
+
+    @Override
+    public void onPlayerLeft(String playerId) {
+        Platform.runLater(() -> {
+            statusMessage.set("Player left: " + playerId);
+            System.out.println("Player left: " + playerId);
+        });
+    }
+
+    @Override
+    public void onGameStarted() {
+        Platform.runLater(() -> {
+            statusMessage.set("Game is starting! Loading game screen...");
+            System.out.println("Game started! Transitioning to game screen...");
+            
+            // TODO: Transition to game screen
+            // This should close the join dialog and open the game screen
+        });
+    }
+
+    @Override
+    public void onGameStateUpdated(GameState gameState) {
+        Platform.runLater(() -> {
+            System.out.println("Game state updated - Turn: " + gameState.getCurrentPlayer());
+            // Game state updates will be handled by the GameScreen
+        });
+    }
+
+    @Override
+    public void onMoveReceived(String playerId, Move move) {
+        Platform.runLater(() -> {
+            System.out.println("Move received from " + playerId + ": " + 
+                move.getFrom().toString() + " -> " + move.getTo().toString());
+            // Moves will be handled by the GameScreen
+        });
+    }
+
+    @Override
+    public void onChatReceived(String playerId, String playerName, String message) {
+        Platform.runLater(() -> {
+            System.out.println("Chat from " + playerName + " (" + playerId + "): " + message);
+            // Chat will be handled by the GameScreen
+        });
+    }
+
+    @Override
+    public void onError(String error) {
+        Platform.runLater(() -> {
+            isConnecting.set(false);
+            isConnected.set(false);
+            statusMessage.set("Error: " + error);
+            System.err.println("Client error: " + error);
+        });
+    }
+
+    @Override
+    public void onMessage(String message) {
+        Platform.runLater(() -> {
+            System.out.println("Server message: " + message);
+            // General messages can be displayed in status or logged
+            statusMessage.set(message);
+        });
+    }
+
+    // ============ Client Management ============
+    
+    /**
+     * Get the active client instance for use by other components
+     * @return Active Client instance, or null if not connected
+     */
+    public Client getGameClient() {
+        return gameClient;
+    }
+
+    /**
+     * Check if client is currently connected to a server
+     * @return true if connected, false otherwise
+     */
+    public boolean hasActiveConnection() {
+        return gameClient != null && isConnected.get();
     }
     
     // Property getters for UI binding
@@ -103,8 +229,9 @@ public class JoinGameDialogViewModel {
         }
         
         // Validate port
+        int portNum;
         try {
-            int portNum = Integer.parseInt(portStr);
+            portNum = Integer.parseInt(portStr);
             if (portNum < 1 || portNum > 65535) {
                 statusMessage.set("Port must be between 1 and 65535");
                 return;
@@ -117,35 +244,31 @@ public class JoinGameDialogViewModel {
         isConnecting.set(true);
         statusMessage.set("Connecting to " + ip + ":" + portStr + "...");
         
-        // TODO: Implement actual client connection logic
-        // For now, simulate the connection process
+        // Create and configure client
+        gameClient = new Client();
+        gameClient.addClientListener(this);
+        
+        // Connect to server in background thread
         new Thread(() -> {
-            try {
-                Thread.sleep(3000); // Simulate connection time
-                Platform.runLater(() -> {
-                    // Simulate successful connection
-                    isConnecting.set(false);
-                    isConnected.set(true);
-                    statusMessage.set("Connected successfully! Waiting for game to start...");
-                    
+            String playerId = "Player_" + System.currentTimeMillis();
+            boolean connected = gameClient.connect(ip, portNum, playerId, name);
+            
+            Platform.runLater(() -> {
+                if (connected) {
                     // Add to recent connections
                     addToRecentConnections(ip + ":" + portStr);
                     
-                    // TODO: Start actual client connection here
-                    System.out.println("Connected to server at " + ip + ":" + portStr);
-                    System.out.println("Player: " + name);
-                    
-                    // TODO: Transition to game screen when game starts
-                });
-            } catch (InterruptedException e) {
-                Platform.runLater(() -> {
+                    System.out.println("Attempting to connect to server at " + ip + ":" + portStr);
+                    System.out.println("Player: " + name + " (ID: " + playerId + ")");
+                } else {
                     isConnecting.set(false);
-                    statusMessage.set("Connection interrupted");
-                });
-            }
+                    statusMessage.set("Failed to connect to server");
+                    gameClient = null;
+                }
+            });
         }).start();
     }
-    
+
     /**
      * Disconnect from the game server
      */
@@ -153,32 +276,23 @@ public class JoinGameDialogViewModel {
         if (!isConnected.get() && !isConnecting.get()) {
             return;
         }
-        
+
         statusMessage.set("Disconnecting...");
-        
-        // TODO: Implement actual client disconnection logic
+
+        // Disconnect from server in background thread
         new Thread(() -> {
-            try {
-                Thread.sleep(1000); // Simulate disconnection time
-                Platform.runLater(() -> {
-                    isConnecting.set(false);
-                    isConnected.set(false);
-                    statusMessage.set("Disconnected from server");
-                    
-                    // TODO: Stop actual client connection here
-                    System.out.println("Disconnected from server");
-                });
-            } catch (InterruptedException e) {
-                Platform.runLater(() -> {
-                    isConnecting.set(false);
-                    isConnected.set(false);
-                    statusMessage.set("Disconnection error");
-                });
+            if (gameClient != null) {
+                gameClient.disconnect();
+                gameClient = null;
             }
+            
+            Platform.runLater(() -> {
+                isConnecting.set(false);
+                isConnected.set(false);
+                statusMessage.set("Disconnected from server");
+            });
         }).start();
-    }
-    
-    /**
+    }    /**
      * Parse connection string (IP:Port format)
      */
     public void parseConnectionString() {

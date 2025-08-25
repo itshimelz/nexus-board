@@ -1,7 +1,10 @@
 package com.himelz.nexusboard.viewController;
 
+import com.himelz.nexusboard.model.Color;
 import com.himelz.nexusboard.model.board.Position;
 import com.himelz.nexusboard.model.pieces.ChessPiece;
+import com.himelz.nexusboard.network.Client;
+import com.himelz.nexusboard.network.Server;
 import com.himelz.nexusboard.viewmodel.GameScreenViewModel;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
@@ -80,6 +83,15 @@ public class GameScreen implements Initializable {
     public GameScreen(Stage stage) {
         this.primaryStage = stage;
         this.viewModel = new GameScreenViewModel();
+    }
+    
+    /**
+     * Constructor for network games
+     */
+    public GameScreen(Stage stage, Client client, Server server, boolean isHost, 
+                      Color localPlayerColor, String localPlayerId) {
+        this.primaryStage = stage;
+        this.viewModel = new GameScreenViewModel(client, server, isHost, localPlayerColor, localPlayerId);
     }
     
     public void show() {

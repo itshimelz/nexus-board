@@ -4,6 +4,7 @@ import com.himelz.nexusboard.model.board.Board;
 import com.himelz.nexusboard.model.board.Move;
 import com.himelz.nexusboard.model.board.Position;
 import com.himelz.nexusboard.model.*;
+import com.himelz.nexusboard.utils.MoveValidator;
 import java.util.List;
 
 /**
@@ -68,8 +69,7 @@ public abstract class ChessPiece {
      * Helper method to check if a position is within board bounds
      */
     protected boolean isValidPosition(Position pos) {
-        return pos.getRow() >= 0 && pos.getRow() < 8 && 
-               pos.getCol() >= 0 && pos.getCol() < 8;
+        return MoveValidator.isValidPosition(pos);
     }
 
     /**
