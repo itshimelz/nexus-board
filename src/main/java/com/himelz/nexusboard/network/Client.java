@@ -246,6 +246,7 @@ public class Client {
                     case "GAME_START" -> handleGameStart(message);
                     case "GAME_STATE" -> handleGameState(message);
                     case "MOVE" -> handleMove(message);
+                    case "GAME_END" -> handleGameEnd(message);
                     case "CHAT" -> handleChat(message);
                     case "PONG" -> handlePong(message);
                     case "ERROR" -> handleError(message);
@@ -507,6 +508,24 @@ public class Client {
     private void handlePong(String message) {
         System.out.println("Pong received from server");
     }
+
+    /**
+     * Handles game end message (resign/draw/checkmate broadcast)
+     */
+    private void handleGameEnd(String message) {
+        // Optionally parse a reason field if present
+    // reason can be shown by UI via onMessage(message) if needed
+    extractJsonValue(message, "message");
+        synchronized (gameStateLock) {
+            if (gameState == null) {
+                gameState = new GameState();
+            }
+            // Mark as not active: choose DRAW for neutral end state; UI will show reason text
+            gameState.setGameStatus(GameState.GameStatus.DRAW);
+        }
+        notifyGameStateUpdated(gameState);
+        notifyMessage(message);
+    }
     
     /**
      * Handles error message from server
@@ -719,6 +738,23 @@ public class Client {
     
     private String createDisconnectMessage() {
         return "{\"type\":\"DISCONNECT\"}";
+    }
+
+    // ============ Network control messages ============
+
+    public void sendNewGameRequest() {
+        if (!isConnected || !isJoined) return;
+        sendMessage("{\"type\":\"NEW_GAME\"}");
+    }
+
+    public void sendResign() {
+        if (!isConnected || !isJoined) return;
+        sendMessage("{\"type\":\"RESIGN\"}");
+    }
+
+    public void sendOfferDraw() {
+        if (!isConnected || !isJoined) return;
+        sendMessage("{\"type\":\"DRAW_OFFER\"}");
     }
     
     // Getters

@@ -421,19 +421,20 @@ public class GameScreenViewModel implements Client.ClientListener {
      * Start a new game
      */
     public void newGame() {
-        // Create a new game state (since reset method doesn't exist)
-        gameState = new GameState();
-        moveHistory.clear();
-        clearSelection();
-        
-        // Reset enhanced status information
-        gameProgressText.set("Opening");
-        materialBalanceText.set("Equal");
-        lastMoveText.set("--");
-        isCheckStatusVisible.set(false);
-        
-        updateGameStatusDisplay();
-        updateBoardState();
+        if (isNetworkGame && gameClient != null) {
+            gameClient.sendNewGameRequest();
+        } else {
+            // Local reset
+            gameState = new GameState();
+            moveHistory.clear();
+            clearSelection();
+            gameProgressText.set("Opening");
+            materialBalanceText.set("Equal");
+            lastMoveText.set("--");
+            isCheckStatusVisible.set(false);
+            updateGameStatusDisplay();
+            updateBoardState();
+        }
     }
     
     /**
@@ -464,7 +465,10 @@ public class GameScreenViewModel implements Client.ClientListener {
      * Resign the current game
      */
     public void resignGame() {
-        if (isGameActive.get()) {
+        if (!isGameActive.get()) return;
+        if (isNetworkGame && gameClient != null) {
+            gameClient.sendResign();
+        } else {
             Color winner = gameState.getCurrentPlayer() == Color.WHITE ? Color.BLACK : Color.WHITE;
             gameStatusMessage.set(gameState.getCurrentPlayer() + " resigned. " + winner + " wins!");
             isGameActive.set(false);
@@ -477,7 +481,10 @@ public class GameScreenViewModel implements Client.ClientListener {
      * Offer/Accept a draw
      */
     public void offerDraw() {
-        if (isGameActive.get()) {
+        if (!isGameActive.get()) return;
+        if (isNetworkGame && gameClient != null) {
+            gameClient.sendOfferDraw();
+        } else {
             gameStatusMessage.set("Game ended in a draw by agreement.");
             isGameActive.set(false);
             canResign.set(false);
@@ -620,18 +627,13 @@ public class GameScreenViewModel implements Client.ClientListener {
 
     @Override
     public void onMoveReceived(String playerId, Move move) {
-        // Only process moves from other players (not our own moves echoed back)
-        if (!playerId.equals(localPlayerId)) {
-            processNetworkMove(move);
-            System.out.println("Game screen: Move received from " + playerId);
-        } else {
-            // For our own moves, just update the UI to reflect the new turn
-            Platform.runLater(() -> {
-                updateGameStatusDisplay();
-                clearSelection(); // Clear selection after our move
-                System.out.println("Game screen: Own move confirmed by server");
-            });
-        }
+        // IMPORTANT: Do not mutate local game state here.
+        // The server broadcasts an authoritative GAME_STATE after each move.
+        // Applying the MOVE here and also consuming GAME_STATE causes turn desync.
+        Platform.runLater(() -> {
+            clearSelection();
+            System.out.println("Game screen: Move notification received (state will sync via GAME_STATE)");
+        });
     }
 
     @Override

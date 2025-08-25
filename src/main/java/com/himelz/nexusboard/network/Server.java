@@ -423,6 +423,53 @@ public class Server {
             }
         }
     }
+
+    // ============ Public handlers for control messages ============
+
+    /**
+     * Handle a request from a player to start a new game.
+     */
+    public void handleNewGameRequest(String requesterId) {
+        synchronized (gameStateLock) {
+            // Reset game regardless of who asked, if at least one player exists
+            gameState = new GameState();
+            String gameStartMessage = createGameStartMessage();
+            broadcastMessage(gameStartMessage);
+            String gameStateMessage = createGameStateMessage(gameState);
+            broadcastMessage(gameStateMessage);
+            notifyGameStateChanged(gameState);
+            System.out.println("New game requested by " + requesterId + "; game reset and broadcasted");
+        }
+    }
+
+    /**
+     * Handle resignation from a player; end game and broadcast.
+     */
+    public void handleResign(String playerId) {
+        synchronized (gameStateLock) {
+            String who = playerId.equals(hostPlayerId) ? "Host" : (playerId.equals(guestPlayerId) ? "Guest" : playerId);
+            // Mark game ended (use DRAW as non-active terminal status if no dedicated RESIGN status exists)
+            gameState.setGameStatus(GameState.GameStatus.DRAW);
+            broadcastMessage(createMessage("GAME_END", who + " resigned"));
+            // Also broadcast state so clients disable moves
+            broadcastMessage(createGameStateMessage(gameState));
+            notifyGameStateChanged(gameState);
+            System.out.println("Game ended by resignation from: " + who);
+        }
+    }
+
+    /**
+     * Auto-accept draw offer and end the game as draw.
+     */
+    public void handleDrawOffer(String playerId) {
+        synchronized (gameStateLock) {
+            gameState.setGameStatus(GameState.GameStatus.DRAW);
+            broadcastMessage(createMessage("GAME_END", "Game ended in a draw by agreement"));
+            broadcastMessage(createGameStateMessage(gameState));
+            notifyGameStateChanged(gameState);
+            System.out.println("Game ended in draw by agreement (offered by: " + playerId + ")");
+        }
+    }
     
     /**
      * Broadcasts a message to all connected clients

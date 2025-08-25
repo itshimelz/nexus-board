@@ -220,10 +220,9 @@ public class GameScreen implements Initializable {
             updateSelectionHighlight(oldPos, newPos);
         });
         
-        // Listen for valid moves changes
-        viewModel.validMovesProperty().addListener((obs, oldMoves, newMoves) -> {
-            updateMoveHighlights();
-        });
+    // Listen for valid moves changes (both reference and content changes)
+    viewModel.validMovesProperty().addListener((obs, oldMoves, newMoves) -> updateMoveHighlights());
+    viewModel.validMovesProperty().get().addListener((javafx.collections.ListChangeListener<? super Position>) change -> updateMoveHighlights());
     }
     
     /**
@@ -271,15 +270,14 @@ public class GameScreen implements Initializable {
         boolean isFlipped = viewModel.isNetworkGame() && 
                            viewModel.getLocalPlayerColor() == Color.BLACK;
         
-        // Create 8x8 grid of squares
+    // Create 8x8 grid of squares
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                // Calculate actual board position based on orientation
-                int displayRow = isFlipped ? (7 - row) : row;
-                int displayCol = col; // Columns remain the same
-                
-                StackPane square = createChessSquare(displayRow, displayCol);
-                chessBoard.add(square, col, row); // Add to grid at visual position
+        // IMPORTANT: Squares are created using VISUAL coordinates (row, col)
+        // Any orientation flip is handled later when translating clicks
+        // via visualToBoard(), and when drawing pieces via boardToVisual().
+        StackPane square = createChessSquare(row, col);
+        chessBoard.add(square, col, row); // Add to grid at visual position
             }
         }
         

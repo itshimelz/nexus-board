@@ -93,6 +93,9 @@ public class ClientHandler implements Runnable {
                 switch (type) {
                     case "JOIN_GAME" -> handleJoinGame(message);
                     case "MOVE" -> handleMove(message);
+                    case "NEW_GAME" -> handleNewGame();
+                    case "RESIGN" -> handleResign();
+                    case "DRAW_OFFER" -> handleDrawOffer();
                     case "CHAT" -> handleChat(message);
                     case "PING" -> handlePing();
                     case "DISCONNECT" -> handleDisconnect();
@@ -196,6 +199,18 @@ public class ClientHandler implements Runnable {
      */
     private void handleDisconnect() {
         disconnect();
+    }
+
+    private void handleNewGame() {
+        server.handleNewGameRequest(playerId);
+    }
+
+    private void handleResign() {
+        server.handleResign(playerId);
+    }
+
+    private void handleDrawOffer() {
+        server.handleDrawOffer(playerId);
     }
     
     /**
@@ -316,6 +331,8 @@ public class ClientHandler implements Runnable {
     private String createErrorMessage(String error) {
         return "{\"type\":\"ERROR\",\"message\":\"" + error + "\"}";
     }
+
+    // (no-op) message helper removed
     
     // Getters
     
