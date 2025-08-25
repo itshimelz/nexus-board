@@ -29,7 +29,7 @@ public class LandingScreenViewModel {
         this.versionInfo = new SimpleStringProperty("Version 1.0.0");
         this.isLoading = new SimpleBooleanProperty(false);
         this.singlePlayerEnabled = new SimpleBooleanProperty(true);
-        this.multiplayerEnabled = new SimpleBooleanProperty(false);
+        this.multiplayerEnabled = new SimpleBooleanProperty(true);
         this.settingsEnabled = new SimpleBooleanProperty(true);
     }
     
@@ -113,13 +113,14 @@ public class LandingScreenViewModel {
             isLoading.set(true);
             
             try {
-                // For now, navigate to Game Screen
-                // TODO: Implement multiplayer lobby/connection screen
-                GameScreen gameScreen = new GameScreen(primaryStage);
-                gameScreen.show();
+                // Navigate to Multiplayer Menu
+                com.himelz.nexusboard.viewController.MultiplayerMenu multiplayerMenu = 
+                    new com.himelz.nexusboard.viewController.MultiplayerMenu(primaryStage);
+                multiplayerMenu.show();
             } catch (Exception e) {
                 e.printStackTrace();
-                // Handle error
+                // Handle error - fallback to game screen for now
+                System.err.println("Failed to load multiplayer menu, error: " + e.getMessage());
             } finally {
                 isLoading.set(false);
             }

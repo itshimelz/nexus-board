@@ -150,12 +150,76 @@
             <children>
                
                <!-- Game Status -->
-               <VBox spacing="10.0" styleClass="status-section">
+               <VBox spacing="12.0" styleClass="status-section">
                   <children>
                      <Label text="Game Status" styleClass="section-title" />
-                     <Label fx:id="gameStatusLabel" text="White to move" styleClass="status-text" />
-                     <Label fx:id="turnLabel" text="Move: 1" styleClass="info-text" />
-                     <Label fx:id="gameModeLabel" text="Mode: Single Player" styleClass="info-text" />
+                     
+                     <!-- Main Game Status -->
+                     <HBox spacing="8.0" alignment="CENTER_LEFT">
+                        <children>
+                           <Label text="●" styleClass="status-indicator" />
+                           <Label fx:id="gameStatusLabel" text="White to move" styleClass="status-text" />
+                        </children>
+                     </HBox>
+                     
+                     <!-- Turn Information -->
+                     <HBox spacing="8.0" alignment="CENTER_LEFT">
+                        <children>
+                           <Label text="T" styleClass="icon-label, turn-icon" />
+                           <Label fx:id="turnLabel" text="Move: 1" styleClass="info-text" />
+                        </children>
+                     </HBox>
+                     
+                     <!-- Game Mode -->
+                     <HBox spacing="8.0" alignment="CENTER_LEFT">
+                        <children>
+                           <Label text="M" styleClass="icon-label, mode-icon" />
+                           <Label fx:id="gameModeLabel" text="Mode: Single Player" styleClass="info-text" />
+                        </children>
+                     </HBox>
+                     
+                     <!-- Separator -->
+                     <Separator styleClass="status-separator" />
+                     
+                     <!-- Additional Status Information -->
+                     <VBox spacing="6.0">
+                        <children>
+                           <!-- Game Progress -->
+                           <HBox spacing="8.0" alignment="CENTER_LEFT">
+                              <children>
+                                 <Label text="P" styleClass="icon-label, progress-icon" />
+                                 <Label text="Progress:" styleClass="label-text" />
+                                 <Label fx:id="gameProgressLabel" text="Opening" styleClass="info-text" />
+                              </children>
+                           </HBox>
+                           
+                           <!-- Material Count -->
+                           <HBox spacing="8.0" alignment="CENTER_LEFT">
+                              <children>
+                                 <Label text="B" styleClass="icon-label, balance-icon" />
+                                 <Label text="Material:" styleClass="label-text" />
+                                 <Label fx:id="materialBalanceLabel" text="Equal" styleClass="info-text" />
+                              </children>
+                           </HBox>
+                           
+                           <!-- Last Move -->
+                           <HBox spacing="8.0" alignment="CENTER_LEFT">
+                              <children>
+                                 <Label text="L" styleClass="icon-label, move-icon" />
+                                 <Label text="Last Move:" styleClass="label-text" />
+                                 <Label fx:id="lastMoveLabel" text="--" styleClass="info-text" />
+                              </children>
+                           </HBox>
+                           
+                           <!-- Check Status -->
+                           <HBox spacing="8.0" alignment="CENTER_LEFT" fx:id="checkStatusBox" visible="false" managed="false">
+                              <children>
+                                 <Label text="!" styleClass="warning-icon" />
+                                 <Label fx:id="checkStatusLabel" text="Check!" styleClass="warning-text" />
+                              </children>
+                           </HBox>
+                        </children>
+                     </VBox>
                   </children>
                </VBox>
                

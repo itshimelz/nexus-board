@@ -143,11 +143,11 @@ graph TB
     ModuleInfo -.-> POM
 
    %% Styling for Implementation Status with Muted and Cool Colors and Black Text
-    classDef implemented fill:#B0C4DE,stroke:#333333,stroke-width:2px,fontColor:#000000
-    classDef partiallyImplemented fill:#D3D3D3,stroke:#333333,stroke-width:2px,fontColor:#000000
-    classDef notImplemented fill:#C0C0C0,stroke:#333333,stroke-width:2px,fontColor:#000000
-    classDef resource fill:#E6E6FA,stroke:#333333,stroke-width:2px,fontColor:#000000
-    classDef config fill:#F5F6F5,stroke:#333333,stroke-width:2px,fontColor:#000000
+    classDef implemented fill:#B0C4DE,stroke:#333333,stroke-width:2px,color:#000000
+    classDef partiallyImplemented fill:#D3D3D3,stroke:#333333,stroke-width:2px,color:#000000
+    classDef notImplemented fill:#C0C0C0,stroke:#333333,stroke-width:2px,color:#000000
+    classDef resource fill:#E6E6FA,stroke:#333333,stroke-width:2px,color:#000000
+    classDef config fill:#F5F6F5,stroke:#333333,stroke-width:2px,color:#000000
     
     %% Apply styles
     class App,Landing,GameScreen,LandingVM,GameState,Board,Position,Move,Square implemented

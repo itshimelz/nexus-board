@@ -71,7 +71,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.himelz.nexusboard/com.himelz.nexusboard.app.ChessApplication
+                                com.himelz.nexusboard.app.ChessApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

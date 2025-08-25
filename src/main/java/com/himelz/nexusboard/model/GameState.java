@@ -99,7 +99,6 @@ public class GameState {
 
 
     //Execute a move on the board
-
     private void executeMove(Move move) {
         ChessPiece movingPiece = move.getMovingPiece();
 

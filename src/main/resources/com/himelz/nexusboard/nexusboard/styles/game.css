@@ -144,6 +144,92 @@
     -fx-background-color: #f8f9fa;
     -fx-background-radius: 8;
     -fx-padding: 15;
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8;
+}
+
+/* Status Indicator */
+.status-indicator {
+    -fx-font-size: 14px;
+    -fx-text-fill: #28a745;
+    -fx-font-weight: bold;
+}
+
+/* Icon Labels */
+.icon-label {
+    -fx-font-size: 12px;
+    -fx-min-width: 20px;
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3498db;
+}
+
+.turn-icon {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 3px;
+    -fx-padding: 2 4 2 4;
+}
+
+.mode-icon {
+    -fx-background-color: #9b59b6;
+    -fx-text-fill: white;
+    -fx-background-radius: 3px;
+    -fx-padding: 2 4 2 4;
+}
+
+.progress-icon {
+    -fx-background-color: #2ecc71;
+    -fx-text-fill: white;
+    -fx-background-radius: 3px;
+    -fx-padding: 2 4 2 4;
+}
+
+.balance-icon {
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
+    -fx-background-radius: 3px;
+    -fx-padding: 2 4 2 4;
+}
+
+.move-icon {
+    -fx-background-color: #e67e22;
+    -fx-text-fill: white;
+    -fx-background-radius: 3px;
+    -fx-padding: 2 4 2 4;
+}
+
+/* Label Text */
+.label-text {
+    -fx-font-size: 11px;
+    -fx-text-fill: #6c757d;
+    -fx-font-weight: bold;
+    -fx-min-width: 60px;
+}
+
+/* Warning Styles */
+.warning-icon {
+    -fx-font-size: 14px;
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #dc3545;
+    -fx-background-radius: 3px;
+    -fx-padding: 2 4 2 4;
+    -fx-font-weight: bold;
+}
+
+.warning-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: #dc3545;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 0 5;
+}
+
+/* Status Separator */
+.status-separator {
+    -fx-background-color: #dee2e6;
+    -fx-pref-height: 1px;
+    -fx-max-height: 1px;
 }
 
 /* Control Buttons */

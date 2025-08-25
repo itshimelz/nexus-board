@@ -185,11 +185,12 @@ graph TB
     
     %% === STATUS COLOR CODING ===
     
-    classDef implemented fill:#90EE90,stroke:#2E7D32,stroke-width:3px
-    classDef partiallyImplemented fill:#FFE082,stroke:#F57C00,stroke-width:3px
-    classDef notImplemented fill:#FFCDD2,stroke:#D32F2F,stroke-width:3px
-    classDef resource fill:#E1BEE7,stroke:#8E24AA,stroke-width:2px
-    classDef user fill:#BBDEFB,stroke:#1976D2,stroke-width:3px
+    classDef implemented fill:#90EE90,stroke:#2E7D32,stroke-width:3px,color:#000000
+    classDef partiallyImplemented fill:#FFE082,stroke:#F57C00,stroke-width:3px,color:#000000
+    classDef notImplemented fill:#FFCDD2,stroke:#D32F2F,stroke-width:3px,color:#000000
+    classDef resource fill:#E1BEE7,stroke:#8E24AA,stroke-width:2px,color:#000000
+    classDef user fill:#BBDEFB,stroke:#1976D2,stroke-width:3px,color:#000000
+
     
     %% Apply Status Colors
     class GameState,Board,Position,Move,Square,Color,GameStatus implemented
