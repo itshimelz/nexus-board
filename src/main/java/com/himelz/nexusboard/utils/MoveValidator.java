@@ -177,6 +177,9 @@ public class MoveValidator {
      */
     public static ValidationResult validateNetworkMove(GameState gameState, Move move, String playerId,
                                                        String hostPlayerId, String guestPlayerId) {
+        System.out.println("DEBUG: Validating network move - playerId: " + playerId + 
+                          ", hostPlayerId: " + hostPlayerId + ", guestPlayerId: " + guestPlayerId);
+        
         // Check game state
         if (!isGameActive(gameState)) {
             return new ValidationResult(false, "Game is not active");
@@ -208,15 +211,24 @@ public class MoveValidator {
         Color playerColor;
         if (playerId.equals(hostPlayerId)) {
             playerColor = gameState.getHostColor(); // Host = White
+            System.out.println("DEBUG: Player is host, color: " + playerColor);
         } else if (playerId.equals(guestPlayerId)) {
             playerColor = gameState.getGuestColor(); // Guest = Black
+            System.out.println("DEBUG: Player is guest, color: " + playerColor);
         } else {
             return new ValidationResult(false, "Unknown player");
         }
 
+        ChessPiece piece = gameState.getBoard().getPiece(move.getFrom());
+        System.out.println("DEBUG: Piece at source position: " + (piece != null ? piece.getClass().getSimpleName() + " (" + piece.getColor() + ")" : "null"));
+        System.out.println("DEBUG: Player color: " + playerColor);
+
         if (!playerOwnsPiece(gameState.getBoard(), move.getFrom(), playerColor)) {
             return new ValidationResult(false, "Cannot move opponent's piece");
-        }        return new ValidationResult(true, "Move validation passed");
+        }
+        
+        System.out.println("DEBUG: Move validation passed");
+        return new ValidationResult(true, "Move validation passed");
     }
     
     // ============ Helper Classes ============

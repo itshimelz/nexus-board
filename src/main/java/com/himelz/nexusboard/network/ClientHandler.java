@@ -136,6 +136,9 @@ public class ClientHandler implements Runnable {
      * Handles move request
      */
     private void handleMove(String message) {
+        System.out.println("DEBUG: ClientHandler handling move message: " + message);
+        System.out.println("DEBUG: ClientHandler playerId: " + playerId);
+        
         try {
             String fromStr = extractJsonValue(message, "from");
             String toStr = extractJsonValue(message, "to");
@@ -153,6 +156,8 @@ public class ClientHandler implements Runnable {
                 sendMessage(createErrorMessage("Invalid position format"));
                 return;
             }
+            
+            System.out.println("DEBUG: Parsed move from " + fromStr + " (" + from + ") to " + toStr + " (" + to + ")");
             
             // Forward to server with positions - let server create proper Move object
             // Server has access to game state and can determine the moving piece
@@ -278,26 +283,16 @@ public class ClientHandler implements Runnable {
     }
     
     /**
-     * Parses a position string (e.g., "e2") to Position object
+     * Parses a position string (e.g., "e2") to Position using canonical mapping.
+     * Position rows are 0 at the top (black back rank) and 7 at the bottom.
      */
     private Position parsePosition(String posStr) {
-        if (posStr == null || posStr.length() != 2) {
+        if (posStr == null) {
             return null;
         }
-        
         try {
-            char file = posStr.charAt(0);
-            char rank = posStr.charAt(1);
-            
-            if (file < 'a' || file > 'h' || rank < '1' || rank > '8') {
-                return null;
-            }
-            
-            int col = file - 'a';
-            int row = rank - '1';
-            
-            return new Position(row, col);
-            
+            // Use the centralized converter to avoid off-by-8 errors
+            return Position.fromAlgebraic(posStr.toLowerCase());
         } catch (Exception e) {
             return null;
         }

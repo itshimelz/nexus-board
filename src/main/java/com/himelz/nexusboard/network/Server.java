@@ -313,6 +313,9 @@ public class Server {
      * Handles a move from a player with comprehensive validation
      */
     public void handleMove(String playerId, Move move) {
+        System.out.println("DEBUG: Handling move from playerId: " + playerId + 
+                          ", hostPlayerId: " + hostPlayerId + ", guestPlayerId: " + guestPlayerId);
+        
         synchronized (gameStateLock) {
             // Use MoveValidator for comprehensive validation
             MoveValidator.ValidationResult validation = MoveValidator.validateNetworkMove(
@@ -330,7 +333,7 @@ public class Server {
                 String moveMessage = createMoveMessage(playerId, move);
                 broadcastMessage(moveMessage);
                 
-                // Send updated game state
+                // Send updated game state to ensure synchronization
                 String gameStateMessage = createGameStateMessage(gameState);
                 broadcastMessage(gameStateMessage);
                 
@@ -500,9 +503,8 @@ public class Server {
                 } else {
                     json.append("{");
                     json.append("\"type\":\"").append(piece.getClass().getSimpleName()).append("\",");
-                    json.append("\"color\":\"").append(piece.getColor().toString()).append("\",");
-                    json.append("\"row\":").append(row).append(",");
-                    json.append("\"col\":").append(col);
+                    json.append("\"color\":\"").append(piece.getColor().toString()).append("\"");
+                    // Remove row and col from piece JSON as they're implied by position
                     json.append("}");
                 }
             }
@@ -548,6 +550,18 @@ public class Server {
     public Set<String> getConnectedPlayerIds() {
         synchronized (clientsLock) {
             return new HashSet<>(clientsByPlayerId.keySet());
+        }
+    }
+    
+    public String getHostPlayerId() {
+        synchronized (gameStateLock) {
+            return hostPlayerId;
+        }
+    }
+    
+    public String getGuestPlayerId() {
+        synchronized (gameStateLock) {
+            return guestPlayerId;
         }
     }
     

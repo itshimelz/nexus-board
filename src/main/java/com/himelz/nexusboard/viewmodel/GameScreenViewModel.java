@@ -301,21 +301,30 @@ public class GameScreenViewModel implements Client.ClientListener {
      * Attempt to make a move
      */
     private boolean attemptMove(Position from, Position to) {
+        System.out.println("DEBUG: Attempting move from " + from + " to " + to);
+        System.out.println("DEBUG: Current player: " + gameState.getCurrentPlayer() + ", Local player color: " + localPlayerColor);
+        
         // Use MoveValidator for pre-validation
         if (isNetworkGame) {
             // For network games, only validate if it's our turn
             if (!MoveValidator.isPlayerTurn(gameState, localPlayerColor)) {
+                System.out.println("Not our turn - current player: " + gameState.getCurrentPlayer() + 
+                                 ", local player: " + localPlayerColor);
                 return false; // Not our turn
+            } else {
+                System.out.println("DEBUG: It is our turn, proceeding with move");
             }
         }
         
         // Basic position validation
         if (!MoveValidator.areValidPositions(from, to)) {
+            System.out.println("DEBUG: Invalid positions");
             return false;
         }
         
         // Use GameState's makeMove method which handles full chess rule validation
         boolean moveSuccessful = gameState.makeMove(from, to);
+        System.out.println("DEBUG: Local move validation result: " + moveSuccessful);
         
         if (moveSuccessful) {
             // Add move to history (simple notation)
@@ -334,7 +343,9 @@ public class GameScreenViewModel implements Client.ClientListener {
             if (isNetworkGame && gameClient != null) {
                 ChessPiece finalPiece = gameState.getBoard().getPiece(to); // Piece is now at destination
                 Move networkMove = new Move(from, to, finalPiece);
+                System.out.println("DEBUG: Sending move to server: " + networkMove);
                 gameClient.sendMove(networkMove);
+                System.out.println("Sent move to server: " + from.toAlgebraic() + " -> " + to.toAlgebraic());
             }
             
             return true;
@@ -577,6 +588,7 @@ public class GameScreenViewModel implements Client.ClientListener {
             this.gameState = gameState;
             updateGameStatusDisplay();
             updateBoardState();
+            clearSelection(); // Clear any selections when game state updates
             System.out.println("Game screen: Game state updated from server");
         });
     }
@@ -587,6 +599,13 @@ public class GameScreenViewModel implements Client.ClientListener {
         if (!playerId.equals(localPlayerId)) {
             processNetworkMove(move);
             System.out.println("Game screen: Move received from " + playerId);
+        } else {
+            // For our own moves, just update the UI to reflect the new turn
+            Platform.runLater(() -> {
+                updateGameStatusDisplay();
+                clearSelection(); // Clear selection after our move
+                System.out.println("Game screen: Own move confirmed by server");
+            });
         }
     }
 

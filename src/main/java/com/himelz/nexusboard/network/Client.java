@@ -156,12 +156,17 @@ public class Client {
      * Sends a move to the server
      */
     public void sendMove(Move move) {
+        System.out.println("DEBUG: Client sending move: " + move);
+        System.out.println("DEBUG: Client playerId: " + playerId);
+        System.out.println("DEBUG: Client isJoined: " + isJoined);
+        
         if (!isConnected || !isJoined) {
             notifyError("Not connected or joined to game");
             return;
         }
         
         String moveMessage = createMoveMessage(move);
+        System.out.println("DEBUG: Sending move message: " + moveMessage);
         sendMessage(moveMessage);
     }
     
@@ -389,19 +394,37 @@ public class Client {
             if (boardStateJson.startsWith("[") && boardStateJson.endsWith("]")) {
                 // Remove outer brackets
                 String content = boardStateJson.substring(1, boardStateJson.length() - 1);
-                String[] rows = content.split("\\],\\[");
+                // Split rows by "]," but handle the last row specially
+                String[] rows = content.split("\\],");
                 
                 for (int row = 0; row < Math.min(rows.length, 8); row++) {
-                    String rowContent = rows[row].replaceAll("^\\[|\\]$", "");
+                    // For the last row, we need to remove the trailing "]" 
+                    String rowContent = rows[row];
+                    if (row == rows.length - 1 && rowContent.endsWith("]")) {
+                        rowContent = rowContent.substring(0, rowContent.length() - 1);
+                    }
+                    
+                    // Remove leading "["
+                    if (rowContent.startsWith("[")) {
+                        rowContent = rowContent.substring(1);
+                    }
+                    
                     if (rowContent.trim().isEmpty()) continue;
                     
+                    // Split cells by "," but be careful with JSON objects
                     String[] cells = rowContent.split(",(?=\\{|null)");
                     
                     for (int col = 0; col < Math.min(cells.length, 8); col++) {
                         String cell = cells[col].trim();
+                        
+                        // Handle case where cells might still have trailing commas
+                        if (cell.endsWith(",")) {
+                            cell = cell.substring(0, cell.length() - 1);
+                        }
+                        
                         Position position = new Position(row, col);
                         
-                        if ("null".equals(cell)) {
+                        if ("null".equals(cell) || cell.isEmpty()) {
                             gameState.getBoard().setPiece(position, null);
                         } else if (cell.startsWith("{") && cell.endsWith("}")) {
                             // Parse piece JSON
@@ -655,34 +678,19 @@ public class Client {
         if (posStr == null || posStr.length() < 2) {
             return null;
         }
-        
         try {
-            // Handle different position formats
+            // Support legacy debug format and standard algebraic
             if (posStr.startsWith("Position")) {
-                // Extract row and col from "Position{row=X, col=Y}" format
                 int rowStart = posStr.indexOf("row=") + 4;
                 int rowEnd = posStr.indexOf(",", rowStart);
                 int colStart = posStr.indexOf("col=") + 4;
                 int colEnd = posStr.indexOf("}", colStart);
-                
                 int row = Integer.parseInt(posStr.substring(rowStart, rowEnd));
                 int col = Integer.parseInt(posStr.substring(colStart, colEnd));
-                
-                return new Position(row, col);
-            } else {
-                // Standard chess notation (e.g., "e2")
-                char file = posStr.charAt(0);
-                char rank = posStr.charAt(1);
-                
-                if (file < 'a' || file > 'h' || rank < '1' || rank > '8') {
-                    return null;
-                }
-                
-                int col = file - 'a';
-                int row = rank - '1';
-                
                 return new Position(row, col);
             }
+            // Use centralized converter for algebraic like "e2"
+            return Position.fromAlgebraic(posStr.toLowerCase());
         } catch (Exception e) {
             return null;
         }
@@ -696,6 +704,7 @@ public class Client {
     }
     
     private String createMoveMessage(Move move) {
+        System.out.println("DEBUG: Creating move message for move: " + move + " with playerId: " + playerId);
         return "{\"type\":\"MOVE\",\"from\":\"" + move.getFrom() + 
                "\",\"to\":\"" + move.getTo() + "\"}";
     }
@@ -738,6 +747,18 @@ public class Client {
     
     public String getPlayerColor() {
         return playerColor;
+    }
+    
+    public String getHostPlayerId() {
+        // In a client, we need to get this information from the server
+        // For now, we'll return null and let the server handle this validation
+        return null;
+    }
+    
+    public String getGuestPlayerId() {
+        // In a client, we need to get this information from the server
+        // For now, we'll return null and let the server handle this validation
+        return null;
     }
     
     public GameState getGameState() {
