@@ -205,14 +205,18 @@ public class MoveValidator {
         }
         
         // Determine player color
-        Color playerColor = playerId.equals(hostPlayerId) ? gameState.getHostColor() : 
-                           (gameState.getHostColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
-        
+        Color playerColor;
+        if (playerId.equals(hostPlayerId)) {
+            playerColor = gameState.getHostColor(); // Host = White
+        } else if (playerId.equals(guestPlayerId)) {
+            playerColor = gameState.getGuestColor(); // Guest = Black
+        } else {
+            return new ValidationResult(false, "Unknown player");
+        }
+
         if (!playerOwnsPiece(gameState.getBoard(), move.getFrom(), playerColor)) {
             return new ValidationResult(false, "Cannot move opponent's piece");
-        }
-        
-        return new ValidationResult(true, "Move validation passed");
+        }        return new ValidationResult(true, "Move validation passed");
     }
     
     // ============ Helper Classes ============

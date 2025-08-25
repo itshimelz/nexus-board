@@ -265,11 +265,21 @@ public class GameScreen implements Initializable {
         // Clear any existing content
         chessBoard.getChildren().clear();
         
+        // Determine board orientation based on player color
+        // White player: white pieces at bottom (standard orientation)
+        // Black player: black pieces at bottom (flipped orientation)
+        boolean isFlipped = viewModel.isNetworkGame() && 
+                           viewModel.getLocalPlayerColor() == Color.BLACK;
+        
         // Create 8x8 grid of squares
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                StackPane square = createChessSquare(row, col);
-                chessBoard.add(square, col, row);
+                // Calculate actual board position based on orientation
+                int displayRow = isFlipped ? (7 - row) : row;
+                int displayCol = col; // Columns remain the same
+                
+                StackPane square = createChessSquare(displayRow, displayCol);
+                chessBoard.add(square, col, row); // Add to grid at visual position
             }
         }
         
@@ -284,9 +294,17 @@ public class GameScreen implements Initializable {
         ChessPiece[][] boardState = viewModel.boardStateProperty().get();
         if (boardState == null) return;
         
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                StackPane square = getSquareAt(row, col);
+        // Determine board orientation
+        boolean isFlipped = viewModel.isNetworkGame() && 
+                           viewModel.getLocalPlayerColor() == Color.BLACK;
+        
+        for (int boardRow = 0; boardRow < 8; boardRow++) {
+            for (int boardCol = 0; boardCol < 8; boardCol++) {
+                // Convert board position to visual position
+                int visualRow = isFlipped ? (7 - boardRow) : boardRow;
+                int visualCol = boardCol; // Columns remain the same
+                
+                StackPane square = getSquareAt(visualRow, visualCol);
                 if (square != null) {
                     // Clear existing pieces
                     square.getChildren().removeIf(node -> 
@@ -294,7 +312,7 @@ public class GameScreen implements Initializable {
                         (node instanceof Label && ((Label) node).getStyleClass().contains("chess-piece")));
                     
                     // Add piece if present
-                    ChessPiece piece = boardState[row][col];
+                    ChessPiece piece = boardState[boardRow][boardCol];
                     if (piece != null) {
                         addPieceToSquare(square, piece);
                     }
@@ -425,27 +443,54 @@ public class GameScreen implements Initializable {
     /**
      * Handle chess square click - delegates to ViewModel
      */
-    private void handleSquareClick(int row, int col) {
-        Position clickedPosition = new Position(row, col);
-        viewModel.handleSquareClick(clickedPosition);
+    private void handleSquareClick(int visualRow, int visualCol) {
+        // Convert visual position to board position
+        Position boardPosition = visualToBoard(visualRow, visualCol);
+        viewModel.handleSquareClick(boardPosition);
         
         // Update status display
         if (statusLabel != null) {
-            ChessPiece piece = viewModel.getPieceAt(clickedPosition);
-            if (piece != null && viewModel.isSquareSelected(clickedPosition)) {
-                char file = (char)('a' + col);
-                int rank = 8 - row;
+            ChessPiece piece = viewModel.getPieceAt(boardPosition);
+            if (piece != null && viewModel.isSquareSelected(boardPosition)) {
+                char file = (char)('a' + boardPosition.getCol());
+                int rank = 8 - boardPosition.getRow();
                 statusLabel.setText("Selected: " + piece.getClass().getSimpleName() + " at " + file + rank);
             }
         }
     }
     
     /**
+     * Convert visual position to board position
+     */
+    private Position visualToBoard(int visualRow, int visualCol) {
+        boolean isFlipped = viewModel.isNetworkGame() && 
+                           viewModel.getLocalPlayerColor() == Color.BLACK;
+        
+        int boardRow = isFlipped ? (7 - visualRow) : visualRow;
+        int boardCol = visualCol; // Columns remain the same
+        
+        return new Position(boardRow, boardCol);
+    }
+    
+    /**
+     * Convert board position to visual position
+     */
+    private Position boardToVisual(int boardRow, int boardCol) {
+        boolean isFlipped = viewModel.isNetworkGame() && 
+                           viewModel.getLocalPlayerColor() == Color.BLACK;
+        
+        int visualRow = isFlipped ? (7 - boardRow) : boardRow;
+        int visualCol = boardCol; // Columns remain the same
+        
+        return new Position(visualRow, visualCol);
+    }
+    
+    /**
      * Check if a square is selected
      */
-    private boolean isSquareSelected(int row, int col) {
-        Position position = new Position(row, col);
-        return viewModel.isSquareSelected(position);
+    private boolean isSquareSelected(int visualRow, int visualCol) {
+        Position boardPosition = visualToBoard(visualRow, visualCol);
+        return viewModel.isSquareSelected(boardPosition);
     }
     
     /**
@@ -454,7 +499,8 @@ public class GameScreen implements Initializable {
     private void updateSelectionHighlight(Position oldPos, Position newPos) {
         // Clear old selection highlight
         if (oldPos != null) {
-            StackPane oldSquare = getSquareAt(oldPos.getRow(), oldPos.getCol());
+            Position oldVisual = boardToVisual(oldPos.getRow(), oldPos.getCol());
+            StackPane oldSquare = getSquareAt(oldVisual.getRow(), oldVisual.getCol());
             if (oldSquare != null) {
                 oldSquare.getStyleClass().remove("selected-square");
             }
@@ -462,7 +508,8 @@ public class GameScreen implements Initializable {
         
         // Add new selection highlight
         if (newPos != null) {
-            StackPane newSquare = getSquareAt(newPos.getRow(), newPos.getCol());
+            Position newVisual = boardToVisual(newPos.getRow(), newPos.getCol());
+            StackPane newSquare = getSquareAt(newVisual.getRow(), newVisual.getCol());
             if (newSquare != null) {
                 newSquare.getStyleClass().add("selected-square");
             }
@@ -477,8 +524,9 @@ public class GameScreen implements Initializable {
         clearAllMoveHighlights();
         
         // Add highlights for valid moves
-        for (Position position : viewModel.validMovesProperty().get()) {
-            StackPane square = getSquareAt(position.getRow(), position.getCol());
+        for (Position boardPosition : viewModel.validMovesProperty().get()) {
+            Position visualPosition = boardToVisual(boardPosition.getRow(), boardPosition.getCol());
+            StackPane square = getSquareAt(visualPosition.getRow(), visualPosition.getCol());
             if (square != null) {
                 square.getStyleClass().add("possible-move");
             }

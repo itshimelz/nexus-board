@@ -425,8 +425,12 @@ public class Server {
      * Broadcasts a message to all connected clients
      */
     public void broadcastMessage(String message) {
+        System.out.println("DEBUG: Broadcasting message to " + connectedClients.size() + " clients: " + 
+                          (message.length() > 100 ? message.substring(0, 100) + "..." : message));
+        
         synchronized (clientsLock) {
             for (ClientHandler client : connectedClients) {
+                System.out.println("DEBUG: Sending to client: " + client.getClientId());
                 client.sendMessage(message);
             }
         }
@@ -466,15 +470,48 @@ public class Server {
     }
     
     private String createGameStateMessage(GameState gameState) {
-        // Create a simplified game state message
+        // Create a comprehensive game state message including board state
         String currentPlayer = gameState.getCurrentPlayer().toString();
         String gameStatus = gameState.getGameStatus().toString();
         int moveCount = gameState.getMoveHistory().size();
+        String boardState = createBoardStateJson(gameState);
         
         return "{\"type\":\"GAME_STATE\"," +
                "\"currentPlayer\":\"" + currentPlayer + "\"," +
                "\"gameStatus\":\"" + gameStatus + "\"," +
-               "\"moveCount\":" + moveCount + "}";
+               "\"moveCount\":" + moveCount + "," +
+               "\"boardState\":" + boardState + "}";
+    }
+
+    private String createBoardStateJson(GameState gameState) {
+        StringBuilder json = new StringBuilder();
+        json.append("[");
+        
+        for (int row = 0; row < 8; row++) {
+            if (row > 0) json.append(",");
+            json.append("[");
+            
+            for (int col = 0; col < 8; col++) {
+                if (col > 0) json.append(",");
+                
+                ChessPiece piece = gameState.getBoard().getPiece(new Position(row, col));
+                if (piece == null) {
+                    json.append("null");
+                } else {
+                    json.append("{");
+                    json.append("\"type\":\"").append(piece.getClass().getSimpleName()).append("\",");
+                    json.append("\"color\":\"").append(piece.getColor().toString()).append("\",");
+                    json.append("\"row\":").append(row).append(",");
+                    json.append("\"col\":").append(col);
+                    json.append("}");
+                }
+            }
+            
+            json.append("]");
+        }
+        
+        json.append("]");
+        return json.toString();
     }
     
     private String createGameStartMessage() {

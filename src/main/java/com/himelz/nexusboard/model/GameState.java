@@ -364,6 +364,28 @@ public class GameState {
         return Color.BLACK; // Guest always plays black
     }
 
+    /**
+     * Synchronizes the game state from server data (for multiplayer games)
+     */
+    public void syncFromServer(Color currentPlayer, GameStatus gameStatus) {
+        this.currentPlayer = currentPlayer;
+        this.gameStatus = gameStatus;
+    }
+
+    /**
+     * Sets the current player (for server synchronization)
+     */
+    public void setCurrentPlayer(Color currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    /**
+     * Sets the game status (for server synchronization)
+     */
+    public void setGameStatus(GameStatus gameStatus) {
+        this.gameStatus = gameStatus;
+    }
+
     public enum GameStatus {
         ACTIVE,
         CHECK,

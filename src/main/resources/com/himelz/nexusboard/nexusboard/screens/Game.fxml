@@ -40,12 +40,12 @@
                   <children>
                      <Label text="Captured White Pieces" styleClass="section-title" />
                      <FlowPane fx:id="capturedWhitePieces" hgap="5.0" vgap="5.0">
-                        <Label text="♕♗♙♙" style="-fx-font-size: 20px; -fx-text-fill: #7f8c8d;" />
+                        <!-- Captured white pieces will be added dynamically -->
                      </FlowPane>
                      
                      <Label text="Captured Black Pieces" styleClass="section-title" />
                      <FlowPane fx:id="capturedBlackPieces" hgap="5.0" vgap="5.0">
-                        <Label text="♛♞♟" style="-fx-font-size: 20px; -fx-text-fill: #7f8c8d;" />
+                        <!-- Captured black pieces will be added dynamically -->
                      </FlowPane>
                   </children>
                </VBox>

@@ -1,8 +1,10 @@
 package com.himelz.nexusboard.network;
 
+import com.himelz.nexusboard.model.Color;
 import com.himelz.nexusboard.model.GameState;
 import com.himelz.nexusboard.model.board.Move;
 import com.himelz.nexusboard.model.board.Position;
+import com.himelz.nexusboard.model.pieces.*;
 
 import java.io.*;
 import java.net.*;
@@ -221,13 +223,15 @@ public class Client {
             return;
         }
         
-        System.out.println("Received: " + message);
+        System.out.println("DEBUG: Received message: " + 
+                          (message.length() > 150 ? message.substring(0, 150) + "..." : message));
         notifyMessage(message);
         
         try {
             // Simple JSON parsing
             if (message.startsWith("{") && message.endsWith("}")) {
                 String type = extractJsonValue(message, "type");
+                System.out.println("DEBUG: Message type: " + type);
                 
                 switch (type) {
                     case "WELCOME" -> handleWelcome(message);
@@ -322,25 +326,115 @@ public class Client {
      * Handles game state update
      */
     private void handleGameState(String message) {
+        System.out.println("DEBUG: Received game state message: " + message);
+        
         try {
-            String stateData = extractJsonValue(message, "state");
+            String currentPlayer = extractJsonValue(message, "currentPlayer");
+            String gameStatus = extractJsonValue(message, "gameStatus");
+            String moveCount = extractJsonValue(message, "moveCount");
+            String boardStateJson = extractJsonValue(message, "boardState");
+            
+            System.out.println("DEBUG: Parsed values - currentPlayer: " + currentPlayer + 
+                             ", gameStatus: " + gameStatus + ", moveCount: " + moveCount);
+            System.out.println("DEBUG: Board state JSON present: " + (boardStateJson != null));
             
             synchronized (gameStateLock) {
-                // For now, we'll create a new game state
-                // In production, this would parse the FEN string from stateData
                 if (gameState == null) {
                     gameState = new GameState();
+                    System.out.println("DEBUG: Created new game state");
                 }
-                // TODO: Parse FEN string from stateData and update gameState
-                System.out.println("Game state data: " + stateData);
+                
+                // Update current player
+                if (currentPlayer != null) {
+                    Color playerColor = Color.valueOf(currentPlayer);
+                    gameState.setCurrentPlayer(playerColor);
+                    System.out.println("DEBUG: Set current player to: " + playerColor);
+                }
+                
+                // Update game status
+                if (gameStatus != null) {
+                    GameState.GameStatus status = GameState.GameStatus.valueOf(gameStatus);
+                    gameState.setGameStatus(status);
+                    System.out.println("DEBUG: Set game status to: " + status);
+                }
+                
+                // Update board state if provided
+                if (boardStateJson != null && !boardStateJson.equals("null")) {
+                    System.out.println("DEBUG: Updating board from JSON...");
+                    updateBoardFromJson(boardStateJson);
+                } else {
+                    System.out.println("DEBUG: No board state to update");
+                }
+                
+                System.out.println("Game state updated - Current Player: " + currentPlayer + 
+                                 ", Status: " + gameStatus + ", Moves: " + moveCount);
             }
             
             notifyGameStateUpdated(gameState);
-            System.out.println("Game state updated");
             
         } catch (Exception e) {
+            System.err.println("Error processing game state update: " + e.getMessage());
+            e.printStackTrace();
             notifyError("Error processing game state update");
         }
+    }
+    
+    /**
+     * Updates the board state from JSON representation
+     */
+    private void updateBoardFromJson(String boardStateJson) {
+        // Parse the board state JSON and update the game board
+        // This is a simplified JSON parser for the board state
+        try {
+            if (boardStateJson.startsWith("[") && boardStateJson.endsWith("]")) {
+                // Remove outer brackets
+                String content = boardStateJson.substring(1, boardStateJson.length() - 1);
+                String[] rows = content.split("\\],\\[");
+                
+                for (int row = 0; row < Math.min(rows.length, 8); row++) {
+                    String rowContent = rows[row].replaceAll("^\\[|\\]$", "");
+                    if (rowContent.trim().isEmpty()) continue;
+                    
+                    String[] cells = rowContent.split(",(?=\\{|null)");
+                    
+                    for (int col = 0; col < Math.min(cells.length, 8); col++) {
+                        String cell = cells[col].trim();
+                        Position position = new Position(row, col);
+                        
+                        if ("null".equals(cell)) {
+                            gameState.getBoard().setPiece(position, null);
+                        } else if (cell.startsWith("{") && cell.endsWith("}")) {
+                            // Parse piece JSON
+                            String pieceType = extractJsonValue(cell, "type");
+                            String pieceColor = extractJsonValue(cell, "color");
+                            
+                            if (pieceType != null && pieceColor != null) {
+                                ChessPiece piece = createPieceFromType(pieceType, Color.valueOf(pieceColor), position);
+                                gameState.getBoard().setPiece(position, piece);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error parsing board state JSON: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Creates a chess piece from type string
+     */
+    private ChessPiece createPieceFromType(String type, Color color, Position position) {
+        return switch (type) {
+            case "Pawn" -> new Pawn(color, position);
+            case "Rook" -> new Rook(color, position);
+            case "Knight" -> new Knight(color, position);
+            case "Bishop" -> new Bishop(color, position);
+            case "Queen" -> new Queen(color, position);
+            case "King" -> new King(color, position);
+            default -> null;
+        };
     }
     
     /**
@@ -484,19 +578,74 @@ public class Client {
      * Extracts a value from a simple JSON string
      */
     private String extractJsonValue(String json, String key) {
-        String pattern = "\"" + key + "\":\"";
-        int start = json.indexOf(pattern);
-        if (start == -1) {
-            return null;
+        String quotedPattern = "\"" + key + "\":\"";
+        int start = json.indexOf(quotedPattern);
+        
+        if (start != -1) {
+            // Handle quoted string values
+            start += quotedPattern.length();
+            int end = json.indexOf("\"", start);
+            if (end != -1) {
+                return json.substring(start, end);
+            }
         }
         
-        start += pattern.length();
-        int end = json.indexOf("\"", start);
-        if (end == -1) {
-            return null;
+        // Handle non-quoted values (numbers, arrays, objects)
+        String nonQuotedPattern = "\"" + key + "\":";
+        start = json.indexOf(nonQuotedPattern);
+        if (start != -1) {
+            start += nonQuotedPattern.length();
+            
+            // Find the end of the value
+            int end = findJsonValueEnd(json, start);
+            if (end != -1) {
+                return json.substring(start, end).trim();
+            }
         }
         
-        return json.substring(start, end);
+        return null;
+    }
+    
+    /**
+     * Finds the end of a JSON value starting at the given position
+     */
+    private int findJsonValueEnd(String json, int start) {
+        char firstChar = json.charAt(start);
+        
+        if (firstChar == '[') {
+            // Array value - find matching closing bracket
+            int brackets = 1;
+            int pos = start + 1;
+            while (pos < json.length() && brackets > 0) {
+                char c = json.charAt(pos);
+                if (c == '[') brackets++;
+                else if (c == ']') brackets--;
+                pos++;
+            }
+            return brackets == 0 ? pos : -1;
+        } else if (firstChar == '{') {
+            // Object value - find matching closing brace
+            int braces = 1;
+            int pos = start + 1;
+            while (pos < json.length() && braces > 0) {
+                char c = json.charAt(pos);
+                if (c == '{') braces++;
+                else if (c == '}') braces--;
+                pos++;
+            }
+            return braces == 0 ? pos : -1;
+        } else {
+            // Number or literal value - find next comma or closing brace
+            int pos = start;
+            while (pos < json.length()) {
+                char c = json.charAt(pos);
+                if (c == ',' || c == '}') {
+                    return pos;
+                }
+                pos++;
+            }
+            return json.length();
+        }
     }
     
     /**

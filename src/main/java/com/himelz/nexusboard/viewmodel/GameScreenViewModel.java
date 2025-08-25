@@ -476,6 +476,9 @@ public class GameScreenViewModel implements Client.ClientListener {
     public ObjectProperty<ChessPiece[][]> boardStateProperty() { return boardState; }
     
     // Direct accessors for specific use cases
+    public Color getLocalPlayerColor() { return localPlayerColor; }
+    public boolean isNetworkGame() { return gameClient != null || gameServer != null; }
+    
     public ChessPiece getPieceAt(Position position) {
         return gameState.getBoard().getPiece(position);
     }

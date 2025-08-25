@@ -11,18 +11,25 @@ import com.himelz.nexusboard.viewController.MultiplayerMenu;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import com.himelz.nexusboard.network.Server;
+import com.himelz.nexusboard.network.Client;
 import com.himelz.nexusboard.model.GameState;
+import com.himelz.nexusboard.model.Color;
+import com.himelz.nexusboard.model.board.Move;
+import com.himelz.nexusboard.viewController.GameScreen;
 
 /**
  * ViewModel for the Host Game Dialog following MVVM pattern.
  * Handles server hosting logic and state management.
  */
-public class HostGameDialogViewModel implements Server.ServerListener {
+public class HostGameDialogViewModel implements Server.ServerListener, Client.ClientListener {
 
     private final Stage primaryStage;
     
     // Server instance
     private Server gameServer;
+    
+    // Client instance for host to connect to their own server
+    private Client hostClient;
 
     // Observable Properties for UI Binding
     private final StringProperty playerName;
@@ -126,8 +133,11 @@ public class HostGameDialogViewModel implements Server.ServerListener {
                 Platform.runLater(() -> {
                     if (started) {
                         isServerRunning.set(true);
-                        statusMessage.set("Server running - Waiting for players");
+                        statusMessage.set("Server running - Connecting as host...");
                         System.out.println("Host player: " + name);
+                        
+                        // Connect the host as a client to their own server
+                        connectHostAsClient(name, serverPort);
                     } else {
                         statusMessage.set("Failed to start server - Port may be in use");
                         gameServer = null;
@@ -151,6 +161,12 @@ public class HostGameDialogViewModel implements Server.ServerListener {
         }
 
         statusMessage.set("Stopping server...");
+
+        // Disconnect host client first
+        if (hostClient != null && hostClient.isConnected()) {
+            hostClient.disconnect();
+            hostClient = null;
+        }
 
         // Stop server in background thread
         new Thread(() -> {
@@ -222,6 +238,7 @@ public class HostGameDialogViewModel implements Server.ServerListener {
     @Override
     public void onError(String error) {
         Platform.runLater(() -> {
+            System.err.println("Error: " + error);
             statusMessage.set("Error: " + error);
         });
     }
@@ -264,6 +281,42 @@ public class HostGameDialogViewModel implements Server.ServerListener {
             statusMessage.set("Failed to copy to clipboard");
             System.err.println("Failed to copy to clipboard: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Connect the host as a client to their own server
+     */
+    private void connectHostAsClient(String hostName, int serverPort) {
+        new Thread(() -> {
+            try {
+                // Give the server a moment to be ready
+                Thread.sleep(500);
+                
+                // Create and connect host client
+                hostClient = new Client();
+                hostClient.addClientListener(this);
+                
+                // Connect to localhost with host player details
+                String hostPlayerId = "host_" + System.currentTimeMillis();
+                boolean connected = hostClient.connect("localhost", serverPort, hostPlayerId, hostName);
+                
+                Platform.runLater(() -> {
+                    if (connected) {
+                        statusMessage.set("Host connected - Waiting for opponent");
+                        System.out.println("Host successfully connected as client");
+                    } else {
+                        statusMessage.set("Failed to connect host as client");
+                        System.err.println("Host failed to connect as client");
+                    }
+                });
+                
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    statusMessage.set("Error connecting host: " + e.getMessage());
+                    System.err.println("Error connecting host as client: " + e.getMessage());
+                });
+            }
+        }).start();
     }
 
     /**
@@ -349,6 +402,104 @@ public class HostGameDialogViewModel implements Server.ServerListener {
             } else {
                 statusMessage.set("Server running - Waiting for players");
             }
+        });
+    }
+    
+    // Client.ClientListener implementation (for host connecting to their own server)
+    
+    @Override
+    public void onConnected() {
+        Platform.runLater(() -> {
+            System.out.println("Host connected to their own server as a client");
+        });
+    }
+    
+    @Override
+    public void onDisconnected() {
+        Platform.runLater(() -> {
+            System.out.println("Host disconnected from their own server");
+        });
+    }
+    
+    @Override
+    public void onJoinedGame(String role, String color) {
+        Platform.runLater(() -> {
+            System.out.println("Host joined game as " + role + " playing " + color);
+        });
+    }
+    
+    @Override
+    public void onPlayerJoined(String playerId, String playerName) {
+        Platform.runLater(() -> {
+            System.out.println("Host client: Player joined - " + playerName);
+        });
+    }
+    
+    @Override
+    public void onPlayerLeft(String playerId) {
+        Platform.runLater(() -> {
+            System.out.println("Host client: Player left - " + playerId);
+        });
+    }
+    
+    @Override
+    public void onGameStarted() {
+        Platform.runLater(() -> {
+            statusMessage.set("Game is starting! Loading game screen...");
+            System.out.println("Host: Game started! Transitioning to game screen...");
+            
+            try {
+                // Get player information from client
+                String playerId = hostClient.getPlayerId();
+                String playerColorStr = hostClient.getPlayerColor();
+                boolean isHost = true; // This is the host player
+                
+                // Convert string color to enum
+                Color playerColor = "white".equalsIgnoreCase(playerColorStr) ? Color.WHITE : Color.BLACK;
+                
+                // Create and show game screen
+                GameScreen gameScreen = new GameScreen(primaryStage, hostClient, gameServer, isHost, playerColor, playerId);
+                gameScreen.show();
+                
+                System.out.println("Game screen opened for host player: " + playerId + " (Color: " + playerColor + ")");
+                
+            } catch (Exception e) {
+                System.err.println("Failed to transition to game screen: " + e.getMessage());
+                e.printStackTrace();
+                statusMessage.set("Error loading game screen: " + e.getMessage());
+            }
+        });
+    }
+    
+    @Override
+    public void onGameStateUpdated(GameState gameState) {
+        Platform.runLater(() -> {
+            System.out.println("Host client: Game state updated - Turn: " + gameState.getCurrentPlayer());
+            // Game state updates will be handled by the GameScreen
+        });
+    }
+    
+    @Override
+    public void onMoveReceived(String playerId, Move move) {
+        Platform.runLater(() -> {
+            System.out.println("Host client: Move received from " + playerId + ": " + 
+                move.getFrom().toString() + " -> " + move.getTo().toString());
+            // Moves will be handled by the GameScreen
+        });
+    }
+    
+    @Override
+    public void onChatReceived(String playerId, String playerName, String message) {
+        Platform.runLater(() -> {
+            System.out.println("Host client: Chat from " + playerName + ": " + message);
+            // Chat will be handled by the GameScreen
+        });
+    }
+    
+    @Override
+    public void onMessage(String message) {
+        Platform.runLater(() -> {
+            System.out.println("Host client message: " + message);
         });
     }
 }

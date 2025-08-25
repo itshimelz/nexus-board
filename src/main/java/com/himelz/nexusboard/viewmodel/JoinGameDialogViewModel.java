@@ -13,6 +13,8 @@ import java.util.List;
 import com.himelz.nexusboard.network.Client;
 import com.himelz.nexusboard.model.GameState;
 import com.himelz.nexusboard.model.board.Move;
+import com.himelz.nexusboard.model.Color;
+import com.himelz.nexusboard.viewController.GameScreen;
 
 /**
  * ViewModel for the Join Game Dialog following MVVM pattern.
@@ -103,8 +105,26 @@ public class JoinGameDialogViewModel implements Client.ClientListener {
             statusMessage.set("Game is starting! Loading game screen...");
             System.out.println("Game started! Transitioning to game screen...");
             
-            // TODO: Transition to game screen
-            // This should close the join dialog and open the game screen
+            try {
+                // Get player information from client
+                String playerId = gameClient.getPlayerId();
+                String playerColorStr = gameClient.getPlayerColor();
+                boolean isHost = false; // Guest player is never host
+                
+                // Convert string color to enum
+                Color playerColor = "white".equalsIgnoreCase(playerColorStr) ? Color.WHITE : Color.BLACK;
+                
+                // Create and show game screen
+                GameScreen gameScreen = new GameScreen(primaryStage, gameClient, null, isHost, playerColor, playerId);
+                gameScreen.show();
+                
+                System.out.println("Game screen opened for guest player: " + playerId + " (Color: " + playerColor + ")");
+                
+            } catch (Exception e) {
+                System.err.println("Failed to transition to game screen: " + e.getMessage());
+                e.printStackTrace();
+                statusMessage.set("Error loading game screen: " + e.getMessage());
+            }
         });
     }
 
