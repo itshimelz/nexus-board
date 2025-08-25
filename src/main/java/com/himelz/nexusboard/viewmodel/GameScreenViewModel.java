@@ -274,17 +274,42 @@ public class GameScreenViewModel implements Client.ClientListener {
     private void selectSquare(Position position) {
         ChessPiece piece = gameState.getBoard().getPiece(position);
         
-        // Only allow selection of pieces belonging to current player
-        if (piece != null && piece.getColor() == gameState.getCurrentPlayer()) {
-            selectedPosition.set(position);
-            
-            // Get valid moves for this piece from all legal moves
-            List<Move> allLegalMoves = gameState.getLegalMoves();
-            validMoves.clear();
-            for (Move move : allLegalMoves) {
-                if (move.getFrom().equals(position)) {
-                    validMoves.add(move.getTo());
+        // Selection rules differ for local vs network games
+        if (isNetworkGame) {
+            // In network games, selection is only allowed on your turn and for your own pieces
+            if (!MoveValidator.isPlayerTurn(gameState, localPlayerColor)) {
+                // Not our turn; ensure no lingering selection/highlights
+                clearSelection();
+                return;
+            }
+            if (piece != null && piece.getColor() == localPlayerColor) {
+                selectedPosition.set(position);
+                // Show valid moves for this piece
+                List<Move> allLegalMoves = gameState.getLegalMoves();
+                validMoves.clear();
+                for (Move move : allLegalMoves) {
+                    if (move.getFrom().equals(position)) {
+                        validMoves.add(move.getTo());
+                    }
                 }
+            } else {
+                // Clicked on opponent or empty square; clear any previous selection
+                clearSelection();
+            }
+        } else {
+            // Local game: allow selection for the side whose turn it is
+            if (piece != null && piece.getColor() == gameState.getCurrentPlayer()) {
+                selectedPosition.set(position);
+                // Show valid moves for this piece
+                List<Move> allLegalMoves = gameState.getLegalMoves();
+                validMoves.clear();
+                for (Move move : allLegalMoves) {
+                    if (move.getFrom().equals(position)) {
+                        validMoves.add(move.getTo());
+                    }
+                }
+            } else {
+                clearSelection();
             }
         }
     }
