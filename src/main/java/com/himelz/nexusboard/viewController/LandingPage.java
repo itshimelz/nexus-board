@@ -52,17 +52,18 @@ public class LandingPage implements Initializable {
             loader.setController(this);
             
             // Create scene
-            scene = new Scene(loader.load(), 1000, 700);
+            scene = new Scene(loader.load());
             
             // Add CSS stylesheet
             String cssPath = getClass().getResource("/com/himelz/nexusboard/nexusboard/styles/landing.css").toExternalForm();
             scene.getStylesheets().add(cssPath);
             
-            // Configure stage
+            // Configure stage with dynamic sizing
             primaryStage.setTitle("Nexus Board - Chess Game");
             primaryStage.setScene(scene);
-            primaryStage.setMinWidth(900);
-            primaryStage.setMinHeight(600);
+            primaryStage.sizeToScene();
+            primaryStage.setMinWidth(500);
+            primaryStage.setMinHeight(500);
             primaryStage.centerOnScreen();
             primaryStage.show();
             

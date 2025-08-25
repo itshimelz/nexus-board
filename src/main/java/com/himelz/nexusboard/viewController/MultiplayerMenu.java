@@ -54,7 +54,12 @@ public class MultiplayerMenu implements Initializable {
             loader.setController(this);
             
             BorderPane root = loader.load();
-            scene = new Scene(root, 800, 700);
+            scene = new Scene(root);
+            
+            // Set dynamic sizing based on content
+            primaryStage.sizeToScene();
+            primaryStage.setMinWidth(500);
+            primaryStage.setMinHeight(600);
             
             // Apply CSS if available
             try {

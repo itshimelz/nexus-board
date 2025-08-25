@@ -75,18 +75,23 @@ public class MultiplayerMenuViewModel {
      */
     public void hostGame() {
         setLoading(true);
-        loadingMessageText.set("Preparing to host game...");
+        loadingMessageText.set("Opening host game dialog...");
         
-        // TODO: Implement host game dialog
-        // For now, just simulate the action
         new Thread(() -> {
             try {
-                Thread.sleep(1000); // Simulate processing
+                Thread.sleep(500); // Brief loading for smooth transition
                 javafx.application.Platform.runLater(() -> {
                     setLoading(false);
-                    connectionStatusText.set("Opening host dialog...");
-                    // TODO: Open HostGameDialog
-                    System.out.println("Host Game clicked - Dialog will be implemented next");
+                    try {
+                        // Open HostGameDialog
+                        com.himelz.nexusboard.viewController.HostGameDialog hostDialog = 
+                            new com.himelz.nexusboard.viewController.HostGameDialog(primaryStage);
+                        hostDialog.show();
+                    } catch (Exception e) {
+                        connectionStatusText.set("Failed to open host dialog");
+                        System.err.println("Failed to open host game dialog: " + e.getMessage());
+                        e.printStackTrace();
+                    }
                 });
             } catch (InterruptedException e) {
                 javafx.application.Platform.runLater(() -> setLoading(false));
