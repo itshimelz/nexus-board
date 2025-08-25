@@ -104,18 +104,23 @@ public class MultiplayerMenuViewModel {
      */
     public void joinGame() {
         setLoading(true);
-        loadingMessageText.set("Preparing to join game...");
+        loadingMessageText.set("Opening join game dialog...");
         
-        // TODO: Implement join game dialog
-        // For now, just simulate the action
         new Thread(() -> {
             try {
-                Thread.sleep(1000); // Simulate processing
+                Thread.sleep(500); // Brief loading for smooth transition
                 javafx.application.Platform.runLater(() -> {
                     setLoading(false);
-                    connectionStatusText.set("Opening join dialog...");
-                    // TODO: Open JoinGameDialog
-                    System.out.println("Join Game clicked - Dialog will be implemented next");
+                    try {
+                        // Open JoinGameDialog
+                        com.himelz.nexusboard.viewController.JoinGameDialog joinDialog = 
+                            new com.himelz.nexusboard.viewController.JoinGameDialog(primaryStage);
+                        joinDialog.show();
+                    } catch (Exception e) {
+                        connectionStatusText.set("Failed to open join dialog");
+                        System.err.println("Failed to open join game dialog: " + e.getMessage());
+                        e.printStackTrace();
+                    }
                 });
             } catch (InterruptedException e) {
                 javafx.application.Platform.runLater(() -> setLoading(false));

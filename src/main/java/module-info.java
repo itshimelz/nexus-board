@@ -1,12 +1,14 @@
 open module com.himelz.nexusboard {
     requires java.base;
     requires java.desktop;
+    requires javafx.fxml;
     requires transitive javafx.base;
     requires transitive javafx.controls;
-    requires transitive javafx.fxml;
+//    requires transitive javafx.fxml;
     requires transitive javafx.graphics;
 
     // Export app package
+//    exports com.himelz.nexusboard;
     exports com.himelz.nexusboard.app;
     
     // Export model packages
