@@ -57,8 +57,6 @@ public class HostGameDialog implements Initializable {
             
             // Set dynamic sizing based on content
             primaryStage.sizeToScene();
-            primaryStage.setMinWidth(500);
-            primaryStage.setMinHeight(600);
             
             // Apply CSS if available
             try {
@@ -265,8 +263,6 @@ public class HostGameDialog implements Initializable {
         
         scene = new Scene(root);
         primaryStage.sizeToScene();
-        primaryStage.setMinWidth(400);
-        primaryStage.setMinHeight(300);
         primaryStage.setTitle("Nexus Board - Host Game");
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();

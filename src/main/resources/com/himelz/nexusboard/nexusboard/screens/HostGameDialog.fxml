@@ -6,72 +6,49 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" spacing="15.0" style="-fx-background-color: #ecf0f1; -fx-padding: 20;">
+<VBox xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" 
+     alignment="CENTER" spacing="20.0" styleClass="content-container" 
+     stylesheets="@../styles/application.css">
    
    <!-- Header Section -->
-   <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: linear-gradient(to bottom, #27ae60, #2ecc71); -fx-background-radius: 15; -fx-padding: 20;">
+   <VBox alignment="CENTER" spacing="12.0" styleClass="card-header">
       <children>
          <!-- Host Game Title -->
-         <Text fx:id="titleText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Host Game">
-            <font>
-               <Font name="Arial Bold" size="26.0" />
-            </font>
-         </Text>
+         <Text fx:id="titleText" styleClass="title-medium" text="Host Game" />
          
          <!-- Subtitle -->
-         <Label fx:id="subtitleLabel" text="Start a server and share your connection details" textFill="WHITE">
-            <font>
-               <Font name="Arial" size="13.0" />
-            </font>
-         </Label>
+         <Label fx:id="subtitleLabel" text="Start a server and share your connection details" styleClass="subtitle" />
       </children>
+      <padding>
+         <Insets bottom="20.0" left="32.0" right="32.0" top="20.0" />
+      </padding>
    </VBox>
    
    <!-- Main Content Card -->
-   <VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2); -fx-padding: 30;" maxWidth="450.0" prefWidth="450.0">
+   <VBox alignment="CENTER" spacing="18.0" styleClass="card" maxWidth="480.0" prefWidth="480.0">
       <children>
          
          <!-- Player Name Section -->
          <VBox alignment="CENTER" spacing="8.0">
             <children>
-               <Label text="Your Player Name" textFill="#2c3e50">
-                  <font>
-                     <Font name="Arial Bold" size="14.0" />
-                  </font>
-               </Label>
-               <TextField fx:id="playerNameField" promptText="Enter your name..." style="-fx-background-radius: 8; -fx-padding: 10;" prefWidth="300.0">
-                  <font>
-                     <Font name="Arial" size="14.0" />
-                  </font>
-               </TextField>
+               <Label text="Your Player Name" styleClass="title-small" />
+               <TextField fx:id="playerNameField" promptText="Enter your name..." styleClass="text-field" prefWidth="320.0" />
             </children>
          </VBox>
          
          <!-- Server Configuration Section -->
-         <VBox alignment="CENTER" spacing="15.0">
+         <VBox alignment="CENTER" spacing="16.0">
             <children>
-               <Label text="Server Configuration" textFill="#2c3e50">
-                  <font>
-                     <Font name="Arial Bold" size="16.0" />
-                  </font>
-               </Label>
+               <Label text="Server Configuration" styleClass="title-small" />
                
                <!-- IP Address Display -->
-               <VBox alignment="CENTER" spacing="5.0">
+               <VBox alignment="CENTER" spacing="6.0">
                   <children>
-                     <Label text="Your IP Address (share with friends)" textFill="#7f8c8d">
-                        <font>
-                           <Font name="Arial" size="12.0" />
-                        </font>
-                     </Label>
-                     <HBox alignment="CENTER" spacing="10.0">
+                     <Label text="Your IP Address (share with friends)" styleClass="caption" />
+                     <HBox alignment="CENTER" spacing="12.0">
                         <children>
-                           <TextField fx:id="ipAddressField" editable="false" style="-fx-background-radius: 8; -fx-padding: 8; -fx-background-color: #f8f9fa;" prefWidth="200.0" text="Loading...">
-                              <font>
-                                 <Font name="Arial" size="14.0" />
-                              </font>
-                           </TextField>
-                           <Button fx:id="copyIpButton" mnemonicParsing="false" onAction="#onCopyIpClick" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6;" text="Copy">
+                           <TextField fx:id="ipAddressField" editable="false" styleClass="text-field" prefWidth="220.0" text="Loading..." />
+                           <Button fx:id="copyIpButton" mnemonicParsing="false" onAction="#onCopyIpClick" styleClass="button, button-primary" text="⧉ Copy">
                               <cursor>
                                  <javafx.scene.Cursor fx:constant="HAND" />
                               </cursor>
@@ -82,18 +59,10 @@
                </VBox>
                
                <!-- Port Configuration -->
-               <VBox alignment="CENTER" spacing="5.0">
+               <VBox alignment="CENTER" spacing="6.0">
                   <children>
-                     <Label text="Port Number" textFill="#7f8c8d">
-                        <font>
-                           <Font name="Arial" size="12.0" />
-                        </font>
-                     </Label>
-                     <TextField fx:id="portField" style="-fx-background-radius: 8; -fx-padding: 8;" prefWidth="150.0" text="8888">
-                        <font>
-                           <Font name="Arial" size="14.0" />
-                        </font>
-                     </TextField>
+                     <Label text="Port Number" styleClass="caption" />
+                     <TextField fx:id="portField" styleClass="text-field" prefWidth="120.0" text="8888" />
                   </children>
                </VBox>
             </children>
@@ -102,28 +71,20 @@
          <!-- Connection Status -->
          <VBox alignment="CENTER" spacing="10.0">
             <children>
-               <Label fx:id="statusLabel" text="Ready to start server" textFill="#2c3e50">
-                  <font>
-                     <Font name="Arial Bold" size="14.0" />
-                  </font>
-               </Label>
-               <Label fx:id="playerCountLabel" text="Players connected: 0/2" textFill="#7f8c8d">
-                  <font>
-                     <Font name="Arial" size="12.0" />
-                  </font>
-               </Label>
+               <Label fx:id="statusLabel" text="Ready to start server" styleClass="status-info" />
+               <Label fx:id="playerCountLabel" text="Players connected: 0/2" styleClass="caption" />
             </children>
          </VBox>
          
          <!-- Action Buttons -->
-         <HBox alignment="CENTER" spacing="15.0">
+         <HBox alignment="CENTER" spacing="16.0">
             <children>
-               <Button fx:id="startServerButton" mnemonicParsing="false" onAction="#onStartServerClick" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-size: 13px; -fx-font-weight: bold;" text="Start Server">
+               <Button fx:id="startServerButton" mnemonicParsing="false" onAction="#onStartServerClick" prefHeight="42.0" prefWidth="140.0" styleClass="button, button-secondary" text="▶ Start Server">
                   <cursor>
                      <javafx.scene.Cursor fx:constant="HAND" />
                   </cursor>
                </Button>
-               <Button fx:id="stopServerButton" mnemonicParsing="false" onAction="#onStopServerClick" prefHeight="45.0" prefWidth="150.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 20; -fx-font-size: 14px; -fx-font-weight: bold;" text="⏹️ Stop Server" disable="true">
+               <Button fx:id="stopServerButton" mnemonicParsing="false" onAction="#onStopServerClick" prefHeight="42.0" prefWidth="140.0" styleClass="button, button-accent" text="⏹ Stop Server" disable="true">
                   <cursor>
                      <javafx.scene.Cursor fx:constant="HAND" />
                   </cursor>
@@ -132,48 +93,34 @@
          </HBox>
          
       </children>
+      <padding>
+         <Insets bottom="32.0" left="32.0" right="32.0" top="32.0" />
+      </padding>
    </VBox>
    
    <!-- Instructions Card -->
-   <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1); -fx-padding: 20;" maxWidth="450.0" prefWidth="450.0">
+   <VBox alignment="CENTER" spacing="10.0" styleClass="card" maxWidth="480.0" prefWidth="480.0">
       <children>
-         <Label text="Instructions" textFill="#2c3e50">
-            <font>
-               <Font name="Arial Bold" size="14.0" />
-            </font>
-         </Label>
-         <Label text="1. Enter your player name" textFill="#7f8c8d" wrapText="true">
-            <font>
-               <Font name="Arial" size="11.0" />
-            </font>
-         </Label>
-         <Label text="2. Click 'Start Server' to begin hosting" textFill="#7f8c8d" wrapText="true">
-            <font>
-               <Font name="Arial" size="11.0" />
-            </font>
-         </Label>
-         <Label text="3. Share your IP address with friends" textFill="#7f8c8d" wrapText="true">
-            <font>
-               <Font name="Arial" size="11.0" />
-            </font>
-         </Label>
-         <Label text="4. Wait for opponent to connect" textFill="#7f8c8d" wrapText="true">
-            <font>
-               <Font name="Arial" size="11.0" />
-            </font>
-         </Label>
+         <Label text="Instructions" styleClass="subtitle" />
+         <Label text="1. Enter your player name" styleClass="caption" wrapText="true" />
+         <Label text="2. Click 'Start Server' to begin hosting" styleClass="caption" wrapText="true" />
+         <Label text="3. Share your IP address with friends" styleClass="caption" wrapText="true" />
+         <Label text="4. Wait for opponent to connect" styleClass="caption" wrapText="true" />
       </children>
+      <padding>
+         <Insets bottom="20.0" left="28.0" right="28.0" top="20.0" />
+      </padding>
    </VBox>
    
    <!-- Bottom Buttons -->
-   <HBox alignment="CENTER" spacing="15.0">
+   <HBox alignment="CENTER" spacing="16.0">
       <children>
-         <Button fx:id="backButton" mnemonicParsing="false" onAction="#onBackClick" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-background-radius: 15; -fx-font-size: 12px;" text="← Back">
+         <Button fx:id="backButton" mnemonicParsing="false" onAction="#onBackClick" prefHeight="38.0" prefWidth="120.0" styleClass="button, button-ghost" text="← Back">
             <cursor>
                <javafx.scene.Cursor fx:constant="HAND" />
             </cursor>
          </Button>
-         <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpClick" prefHeight="35.0" prefWidth="110.0" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-background-radius: 15; -fx-font-size: 11px;" text="Help">
+         <Button fx:id="helpButton" mnemonicParsing="false" onAction="#onHelpClick" prefHeight="38.0" prefWidth="120.0" styleClass="button, button-warning" text="? Help">
             <cursor>
                <javafx.scene.Cursor fx:constant="HAND" />
             </cursor>

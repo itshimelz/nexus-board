@@ -1,0 +1,663 @@
+/* ===========================
+   NEXUS BOARD - MODERN CSS THEME
+   ===========================
+   
+   Color Palette:
+   - Primary: #2563eb (Modern Blue)
+   - Primary Dark: #1d4ed8
+   - Secondary: #059669 (Emerald Green)
+   - Secondary Dark: #047857
+   - Accent: #dc2626 (Red)
+   - Accent Light: #f87171
+   - Warning: #f59e0b (Amber)
+   - Success: #10b981 (Green)
+   - Background: #f8fafc (Light Gray)
+   - Surface: #ffffff (White)
+   - Text Primary: #1e293b (Dark Slate)
+   - Text Secondary: #64748b (Slate)
+   - Border: #e2e8f0 (Light Border)
+*/
+
+/* ===========================
+   ROOT VARIABLES
+   =========================== */
+.root {
+    /* Color Variables */
+    -fx-primary: #2563eb;
+    -fx-primary-dark: #1d4ed8;
+    -fx-primary-light: #3b82f6;
+    -fx-secondary: #059669;
+    -fx-secondary-dark: #047857;
+    -fx-secondary-light: #10b981;
+    -fx-accent: #dc2626;
+    -fx-accent-light: #f87171;
+    -fx-warning: #f59e0b;
+    -fx-success: #10b981;
+    -fx-info: #0ea5e9;
+    
+    /* Background Colors */
+    -fx-bg-primary: #f8fafc;
+    -fx-bg-secondary: #f1f5f9;
+    -fx-bg-surface: #ffffff;
+    -fx-bg-glass: rgba(255, 255, 255, 0.85);
+    
+    /* Text Colors */
+    -fx-text-primary: #0f172a; /* darker for contrast */
+    -fx-text-secondary: #334155; /* increased contrast */
+    -fx-text-muted: #475569; /* increased contrast over prior muted */
+    -fx-text-inverse: #ffffff;
+    
+    /* Border Colors */
+    -fx-border-light: #e2e8f0;
+    -fx-border-medium: #cbd5e1;
+    -fx-border-dark: #94a3b8;
+    
+    /* Shadow Effects */
+    -fx-shadow-light: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 2);
+    -fx-shadow-medium: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 4);
+    -fx-shadow-heavy: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 6);
+    
+    /* Gradients */
+    -fx-gradient-primary: linear-gradient(to bottom, -fx-primary, -fx-primary-dark);
+    -fx-gradient-secondary: linear-gradient(to bottom, -fx-secondary, -fx-secondary-dark);
+    -fx-gradient-surface: linear-gradient(to bottom, -fx-bg-surface, -fx-bg-secondary);
+    
+    /* Typography */
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-font-size-xs: 11px;
+    -fx-font-size-sm: 13px;
+    -fx-font-size-base: 14px;
+    -fx-font-size-lg: 16px;
+    -fx-font-size-xl: 18px;
+    -fx-font-size-2xl: 24px;
+    -fx-font-size-3xl: 32px;
+    -fx-font-size-4xl: 48px;
+    
+    /* Spacing */
+    -fx-spacing-xs: 4px;
+    -fx-spacing-sm: 8px;
+    -fx-spacing-md: 12px;
+    -fx-spacing-lg: 16px;
+    -fx-spacing-xl: 24px;
+    -fx-spacing-2xl: 32px;
+    
+    /* Border Radius */
+    -fx-radius-sm: 6px;
+    -fx-radius-md: 8px;
+    -fx-radius-lg: 12px;
+    -fx-radius-xl: 16px;
+    -fx-radius-full: 9999px;
+    
+    /* Transitions */
+    -fx-transition-fast: 150ms;
+    -fx-transition-base: 300ms;
+    -fx-transition-slow: 500ms;
+}
+
+/* ===========================
+   GLOBAL STYLES
+   =========================== */
+.root .text {
+    -fx-font-family: -fx-font-family;
+    -fx-fill: -fx-text-primary;
+    -fx-font-smoothing-type: lcd;
+}
+
+.root .label {
+    -fx-font-family: -fx-font-family;
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-size: -fx-font-size-base;
+}
+
+/* ===========================
+   BUTTON STYLES
+   =========================== */
+
+/* Base Button Style */
+.button {
+    -fx-font-family: -fx-font-family;
+    -fx-font-size: -fx-font-size-base;
+    -fx-font-weight: 500;
+    -fx-padding: 12 24 12 24;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: -fx-shadow-light;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-text-alignment: center;
+}
+
+.button:hover {
+    -fx-effect: -fx-shadow-medium;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.button:pressed {
+    -fx-effect: -fx-shadow-light;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+.button:focused {
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2px;
+}
+
+/* Primary Button */
+.button-primary {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-text-inverse;
+    -fx-border-color: transparent;
+}
+
+.button-primary:hover {
+    -fx-background-color: -fx-primary-dark;
+}
+
+.button-primary:pressed {
+    -fx-background-color: derive(-fx-primary-dark, -10%);
+}
+
+/* Secondary Button */
+.button-secondary {
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-text-inverse;
+    -fx-border-color: transparent;
+}
+
+.button-secondary:hover {
+    -fx-background-color: -fx-secondary-dark;
+}
+
+.button-secondary:pressed {
+    -fx-background-color: derive(-fx-secondary-dark, -10%);
+}
+
+/* Accent Button (Warning/Danger) */
+.button-accent {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: -fx-text-inverse;
+    -fx-border-color: transparent;
+}
+
+.button-accent:hover {
+    -fx-background-color: derive(-fx-accent, -15%);
+}
+
+.button-accent:pressed {
+    -fx-background-color: derive(-fx-accent, -25%);
+}
+
+/* Warning Button */
+.button-warning {
+    -fx-background-color: -fx-warning;
+    -fx-text-fill: -fx-text-inverse;
+    -fx-border-color: transparent;
+}
+
+.button-warning:hover {
+    -fx-background-color: derive(-fx-warning, -15%);
+}
+
+/* Outline Button */
+.button-outline {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-primary;
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 1.5px;
+}
+
+.button-outline:hover {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-text-inverse;
+}
+
+/* Ghost/Subtle Button */
+.button-ghost {
+    -fx-background-color: -fx-bg-secondary; /* higher contrast background */
+    -fx-text-fill: -fx-text-primary;
+    -fx-border-color: -fx-border-medium;
+    -fx-border-width: 1px;
+}
+
+.button-ghost:hover {
+    -fx-background-color: derive(-fx-bg-secondary, -5%);
+    -fx-text-fill: -fx-text-primary;
+}
+
+/* Large Button Size */
+.button-lg {
+    -fx-font-size: -fx-font-size-lg;
+    -fx-padding: 16 32 16 32;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+}
+
+/* Small Button Size */
+.button-sm {
+    -fx-font-size: -fx-font-size-sm;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+}
+
+/* ===========================
+   CARD STYLES
+   =========================== */
+.card {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 16px;
+    -fx-effect: -fx-shadow-medium;
+    -fx-padding: -fx-spacing-2xl;
+    -fx-border-color: -fx-border-light;
+    -fx-border-width: 1px;
+    -fx-border-radius: 16px;
+}
+
+.card-header {
+    -fx-background-color: -fx-gradient-primary;
+    -fx-background-radius: 16px;
+    -fx-padding: -fx-spacing-xl;
+    -fx-effect: -fx-shadow-light;
+}
+
+.card-header .text,
+.card-header .label {
+    -fx-fill: -fx-text-inverse;
+    -fx-text-fill: -fx-text-inverse;
+}
+
+/* ===========================
+   LAYOUT STYLES
+   =========================== */
+.main-layout {
+    -fx-background-color: -fx-bg-primary;
+}
+
+.content-container {
+    -fx-background-color: -fx-bg-primary;
+    -fx-padding: -fx-spacing-2xl;
+}
+
+.panel {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 12px;
+    -fx-effect: -fx-shadow-light;
+    -fx-padding: -fx-spacing-lg;
+    -fx-border-color: -fx-border-light;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+}
+
+/* ===========================
+   FORM STYLES
+   =========================== */
+.text-field {
+    -fx-font-family: -fx-font-family;
+    -fx-font-size: -fx-font-size-base;
+    -fx-text-fill: -fx-text-primary;
+    -fx-background-color: -fx-bg-surface;
+    -fx-border-color: -fx-border-medium;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 12 16 12 16;
+    -fx-effect: none;
+}
+
+.text-field:focused {
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, derive(-fx-primary, 50%), 4, 0, 0, 0);
+}
+
+.text-field:hover {
+    -fx-border-color: -fx-border-dark;
+}
+
+/* ===========================
+   TYPOGRAPHY STYLES
+   =========================== */
+.title-large {
+    -fx-font-size: -fx-font-size-4xl;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-family: -fx-font-family;
+}
+
+.title-medium {
+    -fx-font-size: -fx-font-size-3xl;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-family: -fx-font-family;
+}
+
+.title-small {
+    -fx-font-size: -fx-font-size-2xl;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-family: -fx-font-family;
+}
+
+.subtitle {
+    -fx-font-size: -fx-font-size-lg;
+    -fx-font-weight: normal;
+    -fx-text-fill: -fx-text-secondary; /* already higher contrast */
+    -fx-font-family: -fx-font-family;
+}
+
+.body-text {
+    -fx-font-size: -fx-font-size-base;
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-family: -fx-font-family;
+}
+
+.caption {
+    -fx-font-size: -fx-font-size-sm;
+    -fx-text-fill: -fx-text-secondary; /* improve contrast for small text */
+    -fx-font-family: -fx-font-family;
+}
+
+/* ===========================
+   GAME-SPECIFIC STYLES
+   =========================== */
+
+/* Chess Board */
+.board-container {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 12px;
+    -fx-effect: -fx-shadow-heavy;
+    -fx-padding: -fx-spacing-lg;
+    -fx-border-color: -fx-border-dark;
+    -fx-border-width: 2px;
+    -fx-border-radius: 12px;
+}
+
+.board-title {
+    -fx-font-size: -fx-font-size-xl;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-family: -fx-font-family;
+}
+
+.coordinate-label {
+    -fx-font-size: -fx-font-size-sm;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary; /* improve legibility on board */
+    -fx-font-family: -fx-font-family;
+}
+
+/* Player Sections */
+.player-section-white {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 8px;
+    -fx-padding: -fx-spacing-md;
+    -fx-border-color: -fx-border-medium;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-effect: -fx-shadow-light;
+}
+
+.player-section-black {
+    -fx-background-color: -fx-text-primary;
+    -fx-background-radius: 8px;
+    -fx-padding: -fx-spacing-md;
+    -fx-border-color: -fx-border-dark;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-effect: -fx-shadow-light;
+}
+
+.game-panel {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 12px;
+    -fx-padding: -fx-spacing-lg;
+    -fx-effect: -fx-shadow-medium;
+    -fx-border-color: -fx-border-light;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+}
+
+.section-title {
+    -fx-font-size: -fx-font-size-base; /* larger for legibility */
+    -fx-font-weight: 600;
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-family: -fx-font-family;
+}
+
+/* Ensure white text in dark player section */
+.player-section-black .label,
+.player-section-black .text {
+    -fx-text-fill: -fx-text-inverse;
+    -fx-fill: -fx-text-inverse;
+}
+
+/* ===========================
+   GAME STATUS/CONTROL STYLES (added)
+   =========================== */
+.status-section {
+    -fx-background-color: -fx-bg-surface;
+    -fx-background-radius: 8px;
+    -fx-padding: -fx-spacing-md;
+    -fx-border-color: -fx-border-light;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+}
+
+.status-indicator {
+    -fx-text-fill: -fx-success; /* default to success color */
+    -fx-font-weight: bold;
+}
+
+.status-text {
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-weight: 600;
+}
+
+.icon-label {
+    -fx-text-fill: -fx-text-secondary;
+    -fx-font-weight: 600;
+}
+
+.turn-icon { -fx-text-fill: -fx-info; }
+.mode-icon { -fx-text-fill: -fx-secondary; }
+.warning-icon { -fx-text-fill: -fx-warning; -fx-font-weight: 900; }
+.warning-text { -fx-text-fill: -fx-warning; -fx-font-weight: 700; }
+
+.status-separator .line {
+    -fx-background-color: -fx-border-medium;
+}
+
+.control-button {
+    -fx-background-color: -fx-bg-surface;
+    -fx-text-fill: -fx-text-primary;
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 1.5px;
+}
+.control-button:hover {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-text-inverse;
+}
+
+.control-button-danger {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: -fx-text-inverse;
+}
+.control-button-danger:hover {
+    -fx-background-color: derive(-fx-accent, -10%);
+}
+
+.move-history {
+    -fx-background-color: -fx-bg-surface;
+    -fx-border-color: -fx-border-light;
+    -fx-border-width: 1px;
+    -fx-border-radius: -fx-radius-md;
+}
+.move-history .list-cell { 
+    -fx-text-fill: -fx-text-primary; 
+}
+.move-history .list-cell:selected {
+    -fx-background-color: derive(-fx-primary, 85%);
+    -fx-text-fill: -fx-text-primary;
+}
+
+.status-bar {
+    -fx-background-color: -fx-bg-secondary;
+    -fx-padding: -fx-spacing-md;
+    -fx-border-color: -fx-border-light transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+}
+
+.chess-board {
+    -fx-background-color: -fx-bg-surface;
+    -fx-border-color: -fx-border-dark;
+    -fx-border-width: 2px;
+    -fx-border-radius: -fx-radius-md;
+}
+
+/* ===========================
+   NAVIGATION STYLES
+   =========================== */
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-secondary;
+    -fx-border-color: transparent;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 8px;
+}
+
+.nav-button:hover {
+    -fx-background-color: derive(-fx-bg-secondary, -5%);
+    -fx-text-fill: -fx-text-primary;
+}
+
+.nav-button:pressed {
+    -fx-background-color: derive(-fx-bg-secondary, -10%);
+}
+
+/* ===========================
+   STATUS AND FEEDBACK STYLES
+   =========================== */
+.status-success {
+    -fx-text-fill: -fx-success;
+    -fx-font-weight: bold;
+}
+
+.status-warning {
+    -fx-text-fill: -fx-warning;
+    -fx-font-weight: bold;
+}
+
+.status-error {
+    -fx-text-fill: -fx-accent;
+    -fx-font-weight: bold;
+}
+
+.status-info {
+    -fx-text-fill: -fx-info;
+    -fx-font-weight: bold;
+}
+
+/* ===========================
+   UTILITY CLASSES
+   =========================== */
+.text-center {
+    -fx-text-alignment: center;
+}
+
+.text-left {
+    -fx-text-alignment: left;
+}
+
+.text-right {
+    -fx-text-alignment: right;
+}
+
+.rounded {
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.rounded-lg {
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+}
+
+.shadow {
+    -fx-effect: -fx-shadow-medium;
+}
+
+.shadow-lg {
+    -fx-effect: -fx-shadow-heavy;
+}
+
+/* ===========================
+   RESPONSIVE BEHAVIOR
+   =========================== */
+@media (max-width: 768px) {
+    .card {
+        -fx-padding: -fx-spacing-lg;
+    }
+    
+    .button-lg {
+        -fx-font-size: -fx-font-size-base;
+        -fx-padding: 12 24 12 24;
+    }
+    
+    .title-large {
+        -fx-font-size: -fx-font-size-3xl;
+    }
+}
+
+/* ===========================
+   ACCESSIBILITY ENHANCEMENTS
+   =========================== */
+.focusable:focused {
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, derive(-fx-primary, 50%), 6, 0, 0, 0);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .root {
+        -fx-text-primary: #000000;
+        -fx-bg-surface: #ffffff;
+        -fx-border-medium: #000000;
+    }
+}
+
+/* ===========================
+   ANIMATION CLASSES
+   =========================== */
+.fade-in {
+    -fx-opacity: 0;
+}
+
+.fade-in:animated {
+    -fx-opacity: 1;
+}
+
+.scale-on-hover:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* ===========================
+   LOADING AND STATES
+   =========================== */
+.loading {
+    -fx-opacity: 0.6;
+    -fx-cursor: wait;
+}
+
+.disabled {
+    -fx-opacity: 0.5;
+    -fx-cursor: default;
+}
+
+.disabled .button {
+    -fx-cursor: default;
+}

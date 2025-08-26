@@ -110,8 +110,8 @@ public class GameScreen implements Initializable {
             // Configure stage
             primaryStage.setTitle("Nexus Board - Chess Game");
             primaryStage.setScene(scene);
-            primaryStage.setMinWidth(1200);
-            primaryStage.setMinHeight(800);
+            // Let the window size itself to content
+            primaryStage.sizeToScene();
             primaryStage.centerOnScreen();
             primaryStage.show();
             

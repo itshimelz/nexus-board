@@ -59,8 +59,6 @@ public class JoinGameDialog implements Initializable {
             
             // Set dynamic sizing based on content
             primaryStage.sizeToScene();
-            primaryStage.setMinWidth(500);
-            primaryStage.setMinHeight(700);
             
             // Apply CSS if available
             try {
@@ -296,8 +294,6 @@ public class JoinGameDialog implements Initializable {
         
         scene = new Scene(root);
         primaryStage.sizeToScene();
-        primaryStage.setMinWidth(400);
-        primaryStage.setMinHeight(400);
         primaryStage.setTitle("Nexus Board - Join Game");
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();

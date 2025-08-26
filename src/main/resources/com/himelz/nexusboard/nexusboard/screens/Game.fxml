@@ -7,84 +7,97 @@
 <?import javafx.collections.FXCollections?>
 
 <?import java.lang.String?>
-<BorderPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
+           stylesheets="@../styles/application.css" styleClass="main-layout">
    
    <!-- Main Game Content -->
    <center>
-      <HBox spacing="20.0" style="-fx-background-color: #f8f9fa; -fx-padding: 20;">
+      <HBox spacing="24.0" styleClass="content-container">
          
          <!-- Left Panel: Player Info -->
-         <VBox spacing="15.0" prefWidth="250.0" styleClass="game-panel">
+         <VBox spacing="18.0" prefWidth="280.0" styleClass="game-panel">
             <children>
                
                <!-- Black Player Section -->
-               <VBox spacing="10.0" styleClass="player-section-black">
+               <VBox spacing="12.0" styleClass="player-section-black">
                   <children>
-                     <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <HBox alignment="CENTER_LEFT" spacing="12.0">
                         <children>
-                           <Label text="●" textFill="BLACK" style="-fx-font-size: 20px;" />
-                           <Label fx:id="blackPlayerName" text="Black Player" textFill="WHITE">
+                           <Label text="●" style="-fx-font-size: 20px; -fx-text-fill: white;" />
+                           <Label fx:id="blackPlayerName" text="Black Player">
                               <font>
                                  <Font name="Arial Bold" size="16.0" />
                               </font>
                            </Label>
                         </children>
                      </HBox>
-                     <Label fx:id="blackTimer" text="⏱ 15:00" textFill="WHITE" />
-                     <Label fx:id="blackStatus" text="Waiting..." textFill="#bdc3c7" />
+                     <Label fx:id="blackTimer" text="⏱ 15:00" />
+                     <Label fx:id="blackStatus" text="Waiting..." styleClass="caption" />
                   </children>
+                  <padding>
+                     <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                  </padding>
                </VBox>
                
                <!-- Captured Pieces -->
-               <VBox spacing="5.0">
+               <VBox spacing="8.0">
                   <children>
                      <Label text="Captured White Pieces" styleClass="section-title" />
-                     <FlowPane fx:id="capturedWhitePieces" hgap="5.0" vgap="5.0">
+                     <FlowPane fx:id="capturedWhitePieces" hgap="6.0" vgap="6.0">
                         <!-- Captured white pieces will be added dynamically -->
                      </FlowPane>
                      
                      <Label text="Captured Black Pieces" styleClass="section-title" />
-                     <FlowPane fx:id="capturedBlackPieces" hgap="5.0" vgap="5.0">
+                     <FlowPane fx:id="capturedBlackPieces" hgap="6.0" vgap="6.0">
                         <!-- Captured black pieces will be added dynamically -->
                      </FlowPane>
                   </children>
+                  <padding>
+                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                  </padding>
                </VBox>
                
                <!-- White Player Section -->
-               <VBox spacing="10.0" styleClass="player-section-white">
+               <VBox spacing="12.0" styleClass="player-section-white">
                   <children>
-                     <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <HBox alignment="CENTER_LEFT" spacing="12.0">
                         <children>
-                           <Label text="○" style="-fx-font-size: 20px; -fx-text-fill: #2c3e50;" />
-                           <Label fx:id="whitePlayerName" text="White Player" textFill="#2c3e50">
+                           <Label text="○" style="-fx-font-size: 20px;" />
+                           <Label fx:id="whitePlayerName" text="White Player">
                               <font>
                                  <Font name="Arial Bold" size="16.0" />
                               </font>
                            </Label>
                         </children>
                      </HBox>
-                     <Label fx:id="whiteTimer" text="⏱ 15:00" textFill="#2c3e50" />
-                     <Label fx:id="whiteStatus" text="Your turn" textFill="#27ae60" style="-fx-font-weight: bold;" />
+                     <Label fx:id="whiteTimer" text="⏱ 15:00" />
+                     <Label fx:id="whiteStatus" text="Your turn" styleClass="status-success" />
                   </children>
+                  <padding>
+                     <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                  </padding>
                </VBox>
                
             </children>
+            <padding>
+               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
          </VBox>
          
          <!-- Center: Chess Board -->
-         <VBox alignment="CENTER" spacing="15.0">
+         <VBox alignment="CENTER" spacing="18.0">
             <children>
                
                <!-- Board Title -->
                <Label text="Nexus Board Chess" styleClass="board-title" />
                
                <!-- Chess Board Container -->
-               <VBox alignment="CENTER" spacing="8.0" styleClass="board-container">
+               <VBox alignment="CENTER" spacing="10.0" styleClass="board-container">
                   
                   <!-- Top File Labels (a-h) -->
                   <HBox spacing="0.0" alignment="CENTER">
                      <children>
-                        <Region prefWidth="25.0" />
+                        <Region prefWidth="28.0" />
                         <Label text="a" prefWidth="70.0" alignment="CENTER" styleClass="coordinate-label" />
                         <Label text="b" prefWidth="70.0" alignment="CENTER" styleClass="coordinate-label" />
                         <Label text="c" prefWidth="70.0" alignment="CENTER" styleClass="coordinate-label" />
@@ -101,14 +114,14 @@
                      
                      <!-- Left Rank Numbers -->
                      <VBox spacing="0.0" alignment="CENTER">
-                        <Label text="8" prefHeight="70.0" alignment="CENTER" styleClass="coordinate-label" />
-                        <Label text="7" prefHeight="70.0" alignment="CENTER" styleClass="coordinate-label" />
-                        <Label text="6" prefHeight="70.0" alignment="CENTER" styleClass="coordinate-label" />
-                        <Label text="5" prefHeight="70.0" alignment="CENTER" styleClass="coordinate-label" />
-                        <Label text="4" prefHeight="70.0" alignment="CENTER" styleClass="coordinate-label" />
-                        <Label text="3" prefHeight="70.0" alignment="CENTER" styleClass="coordinate-label" />
-                        <Label text="2" prefHeight="70.0" alignment="CENTER" styleClass="coordinate-label" />
-                        <Label text="1" prefHeight="70.0" alignment="CENTER" styleClass="coordinate-label" />
+                        <Label text="8" prefHeight="70.0" prefWidth="28.0" alignment="CENTER" styleClass="coordinate-label" />
+                        <Label text="7" prefHeight="70.0" prefWidth="28.0" alignment="CENTER" styleClass="coordinate-label" />
+                        <Label text="6" prefHeight="70.0" prefWidth="28.0" alignment="CENTER" styleClass="coordinate-label" />
+                        <Label text="5" prefHeight="70.0" prefWidth="28.0" alignment="CENTER" styleClass="coordinate-label" />
+                        <Label text="4" prefHeight="70.0" prefWidth="28.0" alignment="CENTER" styleClass="coordinate-label" />
+                        <Label text="3" prefHeight="70.0" prefWidth="28.0" alignment="CENTER" styleClass="coordinate-label" />
+                        <Label text="2" prefHeight="70.0" prefWidth="28.0" alignment="CENTER" styleClass="coordinate-label" />
+                        <Label text="1" prefHeight="70.0" prefWidth="28.0" alignment="CENTER" styleClass="coordinate-label" />
                      </VBox>
                      
                      <!-- 8x8 Chess Board -->
@@ -146,16 +159,16 @@
          </VBox>
          
          <!-- Right Panel: Game Controls and Move History -->
-         <VBox spacing="15.0" prefWidth="280.0" styleClass="game-panel">
+         <VBox spacing="18.0" prefWidth="320.0" styleClass="game-panel">
             <children>
                
                <!-- Game Status -->
-               <VBox spacing="12.0" styleClass="status-section">
+               <VBox spacing="14.0" styleClass="status-section">
                   <children>
                      <Label text="Game Status" styleClass="section-title" />
                      
                      <!-- Main Game Status -->
-                     <HBox spacing="8.0" alignment="CENTER_LEFT">
+                     <HBox spacing="10.0" alignment="CENTER_LEFT">
                         <children>
                            <Label text="●" styleClass="status-indicator" />
                            <Label fx:id="gameStatusLabel" text="White to move" styleClass="status-text" />
@@ -163,7 +176,7 @@
                      </HBox>
                      
                      <!-- Turn Information -->
-                     <HBox spacing="8.0" alignment="CENTER_LEFT">
+                     <HBox spacing="10.0" alignment="CENTER_LEFT">
                         <children>
                            <Label text="T" styleClass="icon-label, turn-icon" />
                            <Label fx:id="turnLabel" text="Move: 1" styleClass="info-text" />
@@ -171,7 +184,7 @@
                      </HBox>
                      
                      <!-- Game Mode -->
-                     <HBox spacing="8.0" alignment="CENTER_LEFT">
+                     <HBox spacing="10.0" alignment="CENTER_LEFT">
                         <children>
                            <Label text="M" styleClass="icon-label, mode-icon" />
                            <Label fx:id="gameModeLabel" text="Mode: Single Player" styleClass="info-text" />
@@ -182,10 +195,10 @@
                      <Separator styleClass="status-separator" />
                      
                      <!-- Additional Status Information -->
-                     <VBox spacing="6.0">
+                     <VBox spacing="8.0">
                         <children>
                            <!-- Game Progress -->
-                           <HBox spacing="8.0" alignment="CENTER_LEFT">
+                           <HBox spacing="10.0" alignment="CENTER_LEFT">
                               <children>
                                  <Label text="P" styleClass="icon-label, progress-icon" />
                                  <Label text="Progress:" styleClass="label-text" />
@@ -194,7 +207,7 @@
                            </HBox>
                            
                            <!-- Material Count -->
-                           <HBox spacing="8.0" alignment="CENTER_LEFT">
+                           <HBox spacing="10.0" alignment="CENTER_LEFT">
                               <children>
                                  <Label text="B" styleClass="icon-label, balance-icon" />
                                  <Label text="Material:" styleClass="label-text" />
@@ -203,7 +216,7 @@
                            </HBox>
                            
                            <!-- Last Move -->
-                           <HBox spacing="8.0" alignment="CENTER_LEFT">
+                           <HBox spacing="10.0" alignment="CENTER_LEFT">
                               <children>
                                  <Label text="L" styleClass="icon-label, move-icon" />
                                  <Label text="Last Move:" styleClass="label-text" />
@@ -212,7 +225,7 @@
                            </HBox>
                            
                            <!-- Check Status -->
-                           <HBox spacing="8.0" alignment="CENTER_LEFT" fx:id="checkStatusBox" visible="false" managed="false">
+                           <HBox spacing="10.0" alignment="CENTER_LEFT" fx:id="checkStatusBox" visible="false" managed="false">
                               <children>
                                  <Label text="!" styleClass="warning-icon" />
                                  <Label fx:id="checkStatusLabel" text="Check!" styleClass="warning-text" />
@@ -221,24 +234,30 @@
                         </children>
                      </VBox>
                   </children>
+                  <padding>
+                     <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                  </padding>
                </VBox>
                
                <!-- Game Controls -->
-               <VBox spacing="10.0">
+               <VBox spacing="12.0">
                   <children>
                      <Label text="Game Controls" styleClass="section-title" />
-                     <Button fx:id="newGameButton" text="🔄 New Game" styleClass="control-button" />
-                     <Button fx:id="undoButton" text="↶ Undo Move" styleClass="control-button" />
-                     <Button fx:id="resignButton" text="🏳 Resign" styleClass="control-button-danger" />
-                     <Button fx:id="drawButton" text="🤝 Offer Draw" styleClass="control-button" />
+                     <Button fx:id="newGameButton" text="↻ New Game" styleClass="control-button" prefHeight="36.0" />
+                     <Button fx:id="undoButton" text="↶ Undo Move" styleClass="control-button" prefHeight="36.0" />
+                     <Button fx:id="resignButton" text="⚑ Resign" styleClass="control-button-danger" prefHeight="36.0" />
+                     <Button fx:id="drawButton" text="⚯ Offer Draw" styleClass="control-button" prefHeight="36.0" />
                   </children>
+                  <padding>
+                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                  </padding>
                </VBox>
                
                <!-- Move History -->
-               <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+               <VBox spacing="12.0" VBox.vgrow="ALWAYS">
                   <children>
                      <Label text="Move History" styleClass="section-title" />
-                     <ListView fx:id="moveHistoryList" prefHeight="200.0" styleClass="move-history">
+                     <ListView fx:id="moveHistoryList" prefHeight="220.0" styleClass="move-history">
                         <items>
                            <FXCollections fx:factory="observableArrayList">
                               <String fx:value="1. e4 e5" />
@@ -251,15 +270,21 @@
                </VBox>
                
                <!-- Analysis Panel -->
-               <VBox spacing="8.0">
+               <VBox spacing="10.0">
                   <children>
                      <Label text="Position Analysis" styleClass="section-title" />
                      <Label fx:id="evaluationLabel" text="Evaluation: +0.3" styleClass="info-text" />
                      <Label fx:id="bestMoveLabel" text="Best: Nf3" styleClass="info-text" />
                   </children>
+                  <padding>
+                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                  </padding>
                </VBox>
                
             </children>
+            <padding>
+               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
          </VBox>
          
       </HBox>
@@ -267,12 +292,15 @@
    
    <!-- Bottom Status Bar -->
    <bottom>
-      <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="status-bar">
+      <HBox alignment="CENTER_LEFT" spacing="24.0" styleClass="status-bar">
          <children>
             <Label fx:id="statusLabel" text="Ready to play - White to move" />
             <Region HBox.hgrow="ALWAYS" />
-            <Label fx:id="connectionStatus" text="🟢 Local Game" />
+            <Label fx:id="connectionStatus" text="● Local Game" />
          </children>
+         <padding>
+            <Insets bottom="12.0" left="20.0" right="20.0" top="12.0" />
+         </padding>
       </HBox>
    </bottom>
    

@@ -62,8 +62,6 @@ public class LandingPage implements Initializable {
             primaryStage.setTitle("Nexus Board - Chess Game");
             primaryStage.setScene(scene);
             primaryStage.sizeToScene();
-            primaryStage.setMinWidth(500);
-            primaryStage.setMinHeight(500);
             primaryStage.centerOnScreen();
             primaryStage.show();
             

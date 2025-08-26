@@ -65,3 +65,7 @@ mvn clean package
 ## Architecture
 
 Uses MVVM pattern with JavaFX for clean separation of concerns. Network layer handles client-server communication for multiplayer games.
+
+## Networking
+
+For a deep dive into the socket architecture, threading model, and the JSON protocol used for multiplayer, see NETWORKING.md.

@@ -58,8 +58,6 @@ public class MultiplayerMenu implements Initializable {
             
             // Set dynamic sizing based on content
             primaryStage.sizeToScene();
-            primaryStage.setMinWidth(500);
-            primaryStage.setMinHeight(600);
             
             // Apply CSS if available
             try {
